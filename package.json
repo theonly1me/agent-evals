@@ -18,7 +18,9 @@
     "lint": "biome lint --error-on-warnings --diagnostic-level=warn . && bun run tooling/src/conventions.ts && bun run tooling/src/boundaries.ts && bun run tooling/src/prose.ts && bun run tooling/src/packageGuides.ts",
     "lint:fix": "biome lint --write .",
     "guides": "bun run tooling/src/packageGuides.ts --write",
-    "knip": "knip"
+    "knip": "knip",
+    "build": "turbo run build",
+    "stage": "turbo run stage"
   },
   "devDependencies": {
     "@biomejs/biome": "2.6.4",

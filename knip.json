@@ -16,6 +16,10 @@
     "tooling": {
       "entry": ["src/*.ts", "src/**/*.test.ts"],
       "project": ["src/**/*.ts"]
+    },
+    "packages/cli": {
+      "entry": ["scripts/*.ts", "src/**/*.test.ts", "scripts/**/*.test.ts"],
+      "project": ["src/**/*.ts", "scripts/**/*.ts", "bin/*.mjs"]
     }
   }
 }

@@ -13,6 +13,15 @@
     "test": {
       "dependsOn": ["transit"],
       "outputs": []
+    },
+    "build": {
+      "dependsOn": ["transit"],
+      "outputs": ["dist/**"]
+    },
+    "stage": {
+      "dependsOn": ["build"],
+      "cache": false,
+      "outputs": ["out/**"]
     }
   }
 }
