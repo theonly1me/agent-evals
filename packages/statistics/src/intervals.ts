@@ -38,8 +38,12 @@ export function percentileInterval(options: { estimate: number; samples: number[
 }
 
 function createMeanResampler(choose: (values: readonly number[]) => number) {
+  const buffers = new Map<number, Float64Array>();
+
   return (values: readonly number[]): number => {
-    const drawn = new Float64Array(values.length);
+    const drawn = buffers.get(values.length) ?? new Float64Array(values.length);
+
+    buffers.set(values.length, drawn);
 
     for (let position = 0; position < values.length; position += 1) {
       drawn[position] = choose(values);
