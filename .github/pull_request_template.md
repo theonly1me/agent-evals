@@ -6,6 +6,6 @@ Replace this line with up to seven change bullets, one sentence each. Keep the w
 
 Explain the problem in at most three sentences.
 
-## Verification
+## How to test
 
-List the checks you ran, their results, and any remaining limitation.
+Give the reviewer numbered steps with the expected result of each one.
