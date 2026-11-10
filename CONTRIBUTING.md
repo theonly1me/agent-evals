@@ -51,4 +51,6 @@ Use the [PR template](.github/pull_request_template.md). Keep the body under 250
 
 Release Please maintains a release PR from conventional commits on `main`. Merging it creates the version tag and the GitHub release. After CI passes, a maintainer approves the `npm` environment, and the workflow publishes `agent-evals` with provenance.
 
+The first release is 0.1.0, because `release-as` in `.github/release-please-config.json` sets it. Remove that line after the first release.
+
 Use `feat:` for a minor version, `fix:` for a patch, and `!` for a breaking change. `bun run stage` writes the package to `packages/cli/out/package`. Inspect it with `npm pack --dry-run` before a release. [Design record 003](docs/design/003-distribution.md) gives the reasons.
