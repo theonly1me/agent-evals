@@ -1,0 +1,13 @@
+{
+  "name": "@agent-evals/tooling",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "typecheck": "tsc --noEmit",
+    "test": "bun test"
+  },
+  "dependencies": {
+    "typescript": "5.9.3",
+    "zod": "^4.6.7"
+  }
+}

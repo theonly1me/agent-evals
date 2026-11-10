@@ -3,18 +3,15 @@
     "target": "esnext",
     "module": "esnext",
     "moduleResolution": "bundler",
-    "lib": ["ESNext"],
+    "lib": ["ESNext", "DOM", "DOM.Iterable", "DOM.AsyncIterable"],
     "types": ["bun"],
     "strict": true,
-    "moduleDetection": "force",
     "noEmit": true,
     "noUncheckedIndexedAccess": true,
     "verbatimModuleSyntax": true,
-    "allowImportingTsExtensions": true,
     "esModuleInterop": true,
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
     "resolveJsonModule": true
-  },
-  "include": ["src", "tooling", "examples"]
+  }
 }

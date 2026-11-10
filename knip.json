@@ -1,0 +1,21 @@
+{
+  "$schema": "https://unpkg.com/knip@6/schema.json",
+  "rules": {
+    "exports": "off",
+    "types": "off",
+    "nsExports": "off",
+    "nsTypes": "off",
+    "enumMembers": "off",
+    "duplicates": "off"
+  },
+  "workspaces": {
+    "packages/*": {
+      "entry": ["src/**/*.test.ts"],
+      "project": ["src/**/*.ts"]
+    },
+    "tooling": {
+      "entry": ["src/*.ts", "src/**/*.test.ts"],
+      "project": ["src/**/*.ts"]
+    }
+  }
+}
