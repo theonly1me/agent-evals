@@ -1,0 +1,21 @@
+{
+  "name": "@agent-evals/cli",
+  "private": true,
+  "type": "module",
+  "bin": {
+    "agent-evals": "src/main.ts"
+  },
+  "exports": {
+    ".": "./src/main.ts"
+  },
+  "scripts": {
+    "typecheck": "tsc --noEmit",
+    "test": "bun test"
+  },
+  "dependencies": {
+    "@agent-evals/importers": "workspace:*",
+    "@agent-evals/records": "workspace:*",
+    "@agent-evals/report": "workspace:*",
+    "@agent-evals/verdict": "workspace:*"
+  }
+}
