@@ -1,0 +1,1355 @@
+{
+  "evalId": "eval-8LQ-2026-11-10T13:55:07",
+  "results": {
+    "version": 3,
+    "timestamp": "2026-11-10T13:55:07.246Z",
+    "prompts": [
+      {
+        "id": "d3bcaf71c11c2678899be04d872718325f0916b3b0705e805ee29930663a42e2",
+        "raw": "{{question}}",
+        "label": "{{question}}",
+        "provider": "baseline",
+        "metrics": {
+          "score": 2,
+          "testPassCount": 2,
+          "testFailCount": 2,
+          "testErrorCount": 0,
+          "testCacheHitCount": 0,
+          "assertPassCount": 2,
+          "assertFailCount": 2,
+          "totalLatencyMs": 10,
+          "tokenUsage": {
+            "prompt": 0,
+            "completion": 0,
+            "cached": 0,
+            "total": 0,
+            "numRequests": 4,
+            "completionDetails": {
+              "reasoning": 0,
+              "acceptedPrediction": 0,
+              "rejectedPrediction": 0,
+              "cacheReadInputTokens": 0,
+              "cacheCreationInputTokens": 0
+            },
+            "assertions": {
+              "total": 0,
+              "prompt": 0,
+              "completion": 0,
+              "cached": 0,
+              "numRequests": 0,
+              "completionDetails": {
+                "reasoning": 0,
+                "acceptedPrediction": 0,
+                "rejectedPrediction": 0,
+                "cacheReadInputTokens": 0,
+                "cacheCreationInputTokens": 0
+              }
+            }
+          },
+          "namedScores": {},
+          "namedScoresCount": {},
+          "namedScoreWeights": {},
+          "cost": 0
+        }
+      },
+      {
+        "id": "d3bcaf71c11c2678899be04d872718325f0916b3b0705e805ee29930663a42e2",
+        "raw": "{{question}}",
+        "label": "{{question}}",
+        "provider": "candidate",
+        "metrics": {
+          "score": 2,
+          "testPassCount": 2,
+          "testFailCount": 2,
+          "testErrorCount": 0,
+          "testCacheHitCount": 0,
+          "assertPassCount": 2,
+          "assertFailCount": 2,
+          "totalLatencyMs": 9,
+          "tokenUsage": {
+            "prompt": 0,
+            "completion": 0,
+            "cached": 0,
+            "total": 0,
+            "numRequests": 4,
+            "completionDetails": {
+              "reasoning": 0,
+              "acceptedPrediction": 0,
+              "rejectedPrediction": 0,
+              "cacheReadInputTokens": 0,
+              "cacheCreationInputTokens": 0
+            },
+            "assertions": {
+              "total": 0,
+              "prompt": 0,
+              "completion": 0,
+              "cached": 0,
+              "numRequests": 0,
+              "completionDetails": {
+                "reasoning": 0,
+                "acceptedPrediction": 0,
+                "rejectedPrediction": 0,
+                "cacheReadInputTokens": 0,
+                "cacheCreationInputTokens": 0
+              }
+            }
+          },
+          "namedScores": {},
+          "namedScoresCount": {},
+          "namedScoreWeights": {},
+          "cost": 0
+        }
+      }
+    ],
+    "results": [
+      {
+        "cost": 0,
+        "gradingResult": {
+          "pass": true,
+          "score": 1,
+          "reason": "All assertions passed",
+          "namedScores": {},
+          "tokensUsed": {
+            "total": 0,
+            "prompt": 0,
+            "completion": 0,
+            "cached": 0,
+            "numRequests": 0
+          },
+          "componentResults": [
+            {
+              "pass": true,
+              "score": 1,
+              "reason": "Assertion passed",
+              "assertion": {
+                "type": "contains",
+                "value": "four"
+              }
+            }
+          ]
+        },
+        "id": "7b3ee7ab-0079-41e3-a29a-a4af1e664d9f",
+        "latencyMs": 3,
+        "namedScores": {},
+        "prompt": {
+          "raw": "two plus two is four",
+          "label": "{{question}}",
+          "config": {}
+        },
+        "promptId": "d3bcaf71c11c2678899be04d872718325f0916b3b0705e805ee29930663a42e2",
+        "promptIdx": 0,
+        "repeatGroupId": "test-0-vars-0",
+        "repeatIndex": 0,
+        "provider": {
+          "id": "echo",
+          "label": "baseline"
+        },
+        "response": {
+          "output": "two plus two is four",
+          "raw": "two plus two is four",
+          "cost": 0,
+          "cached": false,
+          "tokenUsage": {
+            "prompt": 0,
+            "completion": 0,
+            "cached": 0,
+            "total": 0,
+            "numRequests": 1,
+            "completionDetails": {
+              "reasoning": 0,
+              "acceptedPrediction": 0,
+              "rejectedPrediction": 0,
+              "cacheReadInputTokens": 0,
+              "cacheCreationInputTokens": 0
+            },
+            "assertions": {
+              "total": 0,
+              "prompt": 0,
+              "completion": 0,
+              "cached": 0,
+              "numRequests": 0,
+              "completionDetails": {
+                "reasoning": 0,
+                "acceptedPrediction": 0,
+                "rejectedPrediction": 0,
+                "cacheReadInputTokens": 0,
+                "cacheCreationInputTokens": 0
+              }
+            }
+          },
+          "isRefusal": false,
+          "metadata": {}
+        },
+        "score": 1,
+        "success": true,
+        "testCase": {
+          "description": "add",
+          "vars": {
+            "question": "two plus two is four"
+          },
+          "assert": [
+            {
+              "type": "contains",
+              "value": "four"
+            }
+          ],
+          "options": {},
+          "metadata": {}
+        },
+        "testIdx": 0,
+        "tokenUsage": {
+          "prompt": 0,
+          "completion": 0,
+          "cached": 0,
+          "total": 0,
+          "numRequests": 1,
+          "completionDetails": {
+            "reasoning": 0,
+            "acceptedPrediction": 0,
+            "rejectedPrediction": 0,
+            "cacheReadInputTokens": 0,
+            "cacheCreationInputTokens": 0
+          },
+          "assertions": {
+            "total": 0,
+            "prompt": 0,
+            "completion": 0,
+            "cached": 0,
+            "numRequests": 0,
+            "completionDetails": {
+              "reasoning": 0,
+              "acceptedPrediction": 0,
+              "rejectedPrediction": 0,
+              "cacheReadInputTokens": 0,
+              "cacheCreationInputTokens": 0
+            }
+          }
+        },
+        "vars": {
+          "question": "two plus two is four"
+        },
+        "metadata": {
+          "_promptfooFileMetadata": {}
+        },
+        "failureReason": 0
+      },
+      {
+        "cost": 0,
+        "gradingResult": {
+          "pass": true,
+          "score": 1,
+          "reason": "All assertions passed",
+          "namedScores": {},
+          "tokensUsed": {
+            "total": 0,
+            "prompt": 0,
+            "completion": 0,
+            "cached": 0,
+            "numRequests": 0
+          },
+          "componentResults": [
+            {
+              "pass": true,
+              "score": 1,
+              "reason": "Assertion passed",
+              "assertion": {
+                "type": "contains",
+                "value": "four"
+              }
+            }
+          ]
+        },
+        "id": "5aa40aad-c71d-4123-9504-92a87085b0dc",
+        "latencyMs": 2,
+        "namedScores": {},
+        "prompt": {
+          "raw": "two plus two is four",
+          "label": "{{question}}",
+          "config": {}
+        },
+        "promptId": "d3bcaf71c11c2678899be04d872718325f0916b3b0705e805ee29930663a42e2",
+        "promptIdx": 1,
+        "repeatGroupId": "test-0-vars-0",
+        "repeatIndex": 0,
+        "provider": {
+          "id": "echo",
+          "label": "candidate"
+        },
+        "response": {
+          "output": "two plus two is four",
+          "raw": "two plus two is four",
+          "cost": 0,
+          "cached": false,
+          "tokenUsage": {
+            "prompt": 0,
+            "completion": 0,
+            "cached": 0,
+            "total": 0,
+            "numRequests": 1,
+            "completionDetails": {
+              "reasoning": 0,
+              "acceptedPrediction": 0,
+              "rejectedPrediction": 0,
+              "cacheReadInputTokens": 0,
+              "cacheCreationInputTokens": 0
+            },
+            "assertions": {
+              "total": 0,
+              "prompt": 0,
+              "completion": 0,
+              "cached": 0,
+              "numRequests": 0,
+              "completionDetails": {
+                "reasoning": 0,
+                "acceptedPrediction": 0,
+                "rejectedPrediction": 0,
+                "cacheReadInputTokens": 0,
+                "cacheCreationInputTokens": 0
+              }
+            }
+          },
+          "isRefusal": false,
+          "metadata": {}
+        },
+        "score": 1,
+        "success": true,
+        "testCase": {
+          "description": "add",
+          "vars": {
+            "question": "two plus two is four"
+          },
+          "assert": [
+            {
+              "type": "contains",
+              "value": "four"
+            }
+          ],
+          "options": {},
+          "metadata": {}
+        },
+        "testIdx": 0,
+        "tokenUsage": {
+          "prompt": 0,
+          "completion": 0,
+          "cached": 0,
+          "total": 0,
+          "numRequests": 1,
+          "completionDetails": {
+            "reasoning": 0,
+            "acceptedPrediction": 0,
+            "rejectedPrediction": 0,
+            "cacheReadInputTokens": 0,
+            "cacheCreationInputTokens": 0
+          },
+          "assertions": {
+            "total": 0,
+            "prompt": 0,
+            "completion": 0,
+            "cached": 0,
+            "numRequests": 0,
+            "completionDetails": {
+              "reasoning": 0,
+              "acceptedPrediction": 0,
+              "rejectedPrediction": 0,
+              "cacheReadInputTokens": 0,
+              "cacheCreationInputTokens": 0
+            }
+          }
+        },
+        "vars": {
+          "question": "two plus two is four"
+        },
+        "metadata": {
+          "_promptfooFileMetadata": {}
+        },
+        "failureReason": 0
+      },
+      {
+        "cost": 0,
+        "gradingResult": {
+          "pass": true,
+          "score": 1,
+          "reason": "All assertions passed",
+          "namedScores": {},
+          "tokensUsed": {
+            "total": 0,
+            "prompt": 0,
+            "completion": 0,
+            "cached": 0,
+            "numRequests": 0
+          },
+          "componentResults": [
+            {
+              "pass": true,
+              "score": 1,
+              "reason": "Assertion passed",
+              "assertion": {
+                "type": "contains",
+                "value": "four"
+              }
+            }
+          ]
+        },
+        "id": "507603bd-7fa5-4d43-a643-0e9d09755c13",
+        "latencyMs": 2,
+        "namedScores": {},
+        "prompt": {
+          "raw": "two plus two is four",
+          "label": "{{question}}",
+          "config": {}
+        },
+        "promptId": "d3bcaf71c11c2678899be04d872718325f0916b3b0705e805ee29930663a42e2",
+        "promptIdx": 0,
+        "repeatGroupId": "test-0-vars-0",
+        "repeatIndex": 1,
+        "provider": {
+          "id": "echo",
+          "label": "baseline"
+        },
+        "response": {
+          "output": "two plus two is four",
+          "raw": "two plus two is four",
+          "cost": 0,
+          "cached": false,
+          "tokenUsage": {
+            "prompt": 0,
+            "completion": 0,
+            "cached": 0,
+            "total": 0,
+            "numRequests": 1,
+            "completionDetails": {
+              "reasoning": 0,
+              "acceptedPrediction": 0,
+              "rejectedPrediction": 0,
+              "cacheReadInputTokens": 0,
+              "cacheCreationInputTokens": 0
+            },
+            "assertions": {
+              "total": 0,
+              "prompt": 0,
+              "completion": 0,
+              "cached": 0,
+              "numRequests": 0,
+              "completionDetails": {
+                "reasoning": 0,
+                "acceptedPrediction": 0,
+                "rejectedPrediction": 0,
+                "cacheReadInputTokens": 0,
+                "cacheCreationInputTokens": 0
+              }
+            }
+          },
+          "isRefusal": false,
+          "metadata": {}
+        },
+        "score": 1,
+        "success": true,
+        "testCase": {
+          "description": "add",
+          "vars": {
+            "question": "two plus two is four"
+          },
+          "assert": [
+            {
+              "type": "contains",
+              "value": "four"
+            }
+          ],
+          "options": {},
+          "metadata": {}
+        },
+        "testIdx": 1,
+        "tokenUsage": {
+          "prompt": 0,
+          "completion": 0,
+          "cached": 0,
+          "total": 0,
+          "numRequests": 1,
+          "completionDetails": {
+            "reasoning": 0,
+            "acceptedPrediction": 0,
+            "rejectedPrediction": 0,
+            "cacheReadInputTokens": 0,
+            "cacheCreationInputTokens": 0
+          },
+          "assertions": {
+            "total": 0,
+            "prompt": 0,
+            "completion": 0,
+            "cached": 0,
+            "numRequests": 0,
+            "completionDetails": {
+              "reasoning": 0,
+              "acceptedPrediction": 0,
+              "rejectedPrediction": 0,
+              "cacheReadInputTokens": 0,
+              "cacheCreationInputTokens": 0
+            }
+          }
+        },
+        "vars": {
+          "question": "two plus two is four"
+        },
+        "metadata": {
+          "_promptfooFileMetadata": {}
+        },
+        "failureReason": 0
+      },
+      {
+        "cost": 0,
+        "gradingResult": {
+          "pass": true,
+          "score": 1,
+          "reason": "All assertions passed",
+          "namedScores": {},
+          "tokensUsed": {
+            "total": 0,
+            "prompt": 0,
+            "completion": 0,
+            "cached": 0,
+            "numRequests": 0
+          },
+          "componentResults": [
+            {
+              "pass": true,
+              "score": 1,
+              "reason": "Assertion passed",
+              "assertion": {
+                "type": "contains",
+                "value": "four"
+              }
+            }
+          ]
+        },
+        "id": "eecbcaf1-824f-4098-a850-7c4645af5d0b",
+        "latencyMs": 2,
+        "namedScores": {},
+        "prompt": {
+          "raw": "two plus two is four",
+          "label": "{{question}}",
+          "config": {}
+        },
+        "promptId": "d3bcaf71c11c2678899be04d872718325f0916b3b0705e805ee29930663a42e2",
+        "promptIdx": 1,
+        "repeatGroupId": "test-0-vars-0",
+        "repeatIndex": 1,
+        "provider": {
+          "id": "echo",
+          "label": "candidate"
+        },
+        "response": {
+          "output": "two plus two is four",
+          "raw": "two plus two is four",
+          "cost": 0,
+          "cached": false,
+          "tokenUsage": {
+            "prompt": 0,
+            "completion": 0,
+            "cached": 0,
+            "total": 0,
+            "numRequests": 1,
+            "completionDetails": {
+              "reasoning": 0,
+              "acceptedPrediction": 0,
+              "rejectedPrediction": 0,
+              "cacheReadInputTokens": 0,
+              "cacheCreationInputTokens": 0
+            },
+            "assertions": {
+              "total": 0,
+              "prompt": 0,
+              "completion": 0,
+              "cached": 0,
+              "numRequests": 0,
+              "completionDetails": {
+                "reasoning": 0,
+                "acceptedPrediction": 0,
+                "rejectedPrediction": 0,
+                "cacheReadInputTokens": 0,
+                "cacheCreationInputTokens": 0
+              }
+            }
+          },
+          "isRefusal": false,
+          "metadata": {}
+        },
+        "score": 1,
+        "success": true,
+        "testCase": {
+          "description": "add",
+          "vars": {
+            "question": "two plus two is four"
+          },
+          "assert": [
+            {
+              "type": "contains",
+              "value": "four"
+            }
+          ],
+          "options": {},
+          "metadata": {}
+        },
+        "testIdx": 1,
+        "tokenUsage": {
+          "prompt": 0,
+          "completion": 0,
+          "cached": 0,
+          "total": 0,
+          "numRequests": 1,
+          "completionDetails": {
+            "reasoning": 0,
+            "acceptedPrediction": 0,
+            "rejectedPrediction": 0,
+            "cacheReadInputTokens": 0,
+            "cacheCreationInputTokens": 0
+          },
+          "assertions": {
+            "total": 0,
+            "prompt": 0,
+            "completion": 0,
+            "cached": 0,
+            "numRequests": 0,
+            "completionDetails": {
+              "reasoning": 0,
+              "acceptedPrediction": 0,
+              "rejectedPrediction": 0,
+              "cacheReadInputTokens": 0,
+              "cacheCreationInputTokens": 0
+            }
+          }
+        },
+        "vars": {
+          "question": "two plus two is four"
+        },
+        "metadata": {
+          "_promptfooFileMetadata": {}
+        },
+        "failureReason": 0
+      },
+      {
+        "cost": 0,
+        "error": "Expected output to contain \"two\"",
+        "gradingResult": {
+          "pass": false,
+          "score": 0,
+          "reason": "Expected output to contain \"two\"",
+          "namedScores": {},
+          "tokensUsed": {
+            "total": 0,
+            "prompt": 0,
+            "completion": 0,
+            "cached": 0,
+            "numRequests": 0
+          },
+          "componentResults": [
+            {
+              "pass": false,
+              "score": 0,
+              "reason": "Expected output to contain \"two\"",
+              "assertion": {
+                "type": "contains",
+                "value": "two"
+              }
+            }
+          ]
+        },
+        "id": "f335a9c7-43c0-4f5c-909a-978c8566af76",
+        "latencyMs": 3,
+        "namedScores": {},
+        "prompt": {
+          "raw": "five minus three",
+          "label": "{{question}}",
+          "config": {}
+        },
+        "promptId": "d3bcaf71c11c2678899be04d872718325f0916b3b0705e805ee29930663a42e2",
+        "promptIdx": 0,
+        "repeatGroupId": "test-1-vars-0",
+        "repeatIndex": 0,
+        "provider": {
+          "id": "echo",
+          "label": "baseline"
+        },
+        "response": {
+          "output": "five minus three",
+          "raw": "five minus three",
+          "cost": 0,
+          "cached": false,
+          "tokenUsage": {
+            "prompt": 0,
+            "completion": 0,
+            "cached": 0,
+            "total": 0,
+            "numRequests": 1,
+            "completionDetails": {
+              "reasoning": 0,
+              "acceptedPrediction": 0,
+              "rejectedPrediction": 0,
+              "cacheReadInputTokens": 0,
+              "cacheCreationInputTokens": 0
+            },
+            "assertions": {
+              "total": 0,
+              "prompt": 0,
+              "completion": 0,
+              "cached": 0,
+              "numRequests": 0,
+              "completionDetails": {
+                "reasoning": 0,
+                "acceptedPrediction": 0,
+                "rejectedPrediction": 0,
+                "cacheReadInputTokens": 0,
+                "cacheCreationInputTokens": 0
+              }
+            }
+          },
+          "isRefusal": false,
+          "metadata": {}
+        },
+        "score": 0,
+        "success": false,
+        "testCase": {
+          "description": "subtract",
+          "vars": {
+            "question": "five minus three"
+          },
+          "assert": [
+            {
+              "type": "contains",
+              "value": "two"
+            }
+          ],
+          "options": {},
+          "metadata": {}
+        },
+        "testIdx": 2,
+        "tokenUsage": {
+          "prompt": 0,
+          "completion": 0,
+          "cached": 0,
+          "total": 0,
+          "numRequests": 1,
+          "completionDetails": {
+            "reasoning": 0,
+            "acceptedPrediction": 0,
+            "rejectedPrediction": 0,
+            "cacheReadInputTokens": 0,
+            "cacheCreationInputTokens": 0
+          },
+          "assertions": {
+            "total": 0,
+            "prompt": 0,
+            "completion": 0,
+            "cached": 0,
+            "numRequests": 0,
+            "completionDetails": {
+              "reasoning": 0,
+              "acceptedPrediction": 0,
+              "rejectedPrediction": 0,
+              "cacheReadInputTokens": 0,
+              "cacheCreationInputTokens": 0
+            }
+          }
+        },
+        "vars": {
+          "question": "five minus three"
+        },
+        "metadata": {
+          "_promptfooFileMetadata": {}
+        },
+        "failureReason": 1
+      },
+      {
+        "cost": 0,
+        "error": "Expected output to contain \"two\"",
+        "gradingResult": {
+          "pass": false,
+          "score": 0,
+          "reason": "Expected output to contain \"two\"",
+          "namedScores": {},
+          "tokensUsed": {
+            "total": 0,
+            "prompt": 0,
+            "completion": 0,
+            "cached": 0,
+            "numRequests": 0
+          },
+          "componentResults": [
+            {
+              "pass": false,
+              "score": 0,
+              "reason": "Expected output to contain \"two\"",
+              "assertion": {
+                "type": "contains",
+                "value": "two"
+              }
+            }
+          ]
+        },
+        "id": "46ec0e96-884c-4773-8d20-1611cae4b0f2",
+        "latencyMs": 3,
+        "namedScores": {},
+        "prompt": {
+          "raw": "five minus three",
+          "label": "{{question}}",
+          "config": {}
+        },
+        "promptId": "d3bcaf71c11c2678899be04d872718325f0916b3b0705e805ee29930663a42e2",
+        "promptIdx": 1,
+        "repeatGroupId": "test-1-vars-0",
+        "repeatIndex": 0,
+        "provider": {
+          "id": "echo",
+          "label": "candidate"
+        },
+        "response": {
+          "output": "five minus three",
+          "raw": "five minus three",
+          "cost": 0,
+          "cached": false,
+          "tokenUsage": {
+            "prompt": 0,
+            "completion": 0,
+            "cached": 0,
+            "total": 0,
+            "numRequests": 1,
+            "completionDetails": {
+              "reasoning": 0,
+              "acceptedPrediction": 0,
+              "rejectedPrediction": 0,
+              "cacheReadInputTokens": 0,
+              "cacheCreationInputTokens": 0
+            },
+            "assertions": {
+              "total": 0,
+              "prompt": 0,
+              "completion": 0,
+              "cached": 0,
+              "numRequests": 0,
+              "completionDetails": {
+                "reasoning": 0,
+                "acceptedPrediction": 0,
+                "rejectedPrediction": 0,
+                "cacheReadInputTokens": 0,
+                "cacheCreationInputTokens": 0
+              }
+            }
+          },
+          "isRefusal": false,
+          "metadata": {}
+        },
+        "score": 0,
+        "success": false,
+        "testCase": {
+          "description": "subtract",
+          "vars": {
+            "question": "five minus three"
+          },
+          "assert": [
+            {
+              "type": "contains",
+              "value": "two"
+            }
+          ],
+          "options": {},
+          "metadata": {}
+        },
+        "testIdx": 2,
+        "tokenUsage": {
+          "prompt": 0,
+          "completion": 0,
+          "cached": 0,
+          "total": 0,
+          "numRequests": 1,
+          "completionDetails": {
+            "reasoning": 0,
+            "acceptedPrediction": 0,
+            "rejectedPrediction": 0,
+            "cacheReadInputTokens": 0,
+            "cacheCreationInputTokens": 0
+          },
+          "assertions": {
+            "total": 0,
+            "prompt": 0,
+            "completion": 0,
+            "cached": 0,
+            "numRequests": 0,
+            "completionDetails": {
+              "reasoning": 0,
+              "acceptedPrediction": 0,
+              "rejectedPrediction": 0,
+              "cacheReadInputTokens": 0,
+              "cacheCreationInputTokens": 0
+            }
+          }
+        },
+        "vars": {
+          "question": "five minus three"
+        },
+        "metadata": {
+          "_promptfooFileMetadata": {}
+        },
+        "failureReason": 1
+      },
+      {
+        "cost": 0,
+        "error": "Expected output to contain \"two\"",
+        "gradingResult": {
+          "pass": false,
+          "score": 0,
+          "reason": "Expected output to contain \"two\"",
+          "namedScores": {},
+          "tokensUsed": {
+            "total": 0,
+            "prompt": 0,
+            "completion": 0,
+            "cached": 0,
+            "numRequests": 0
+          },
+          "componentResults": [
+            {
+              "pass": false,
+              "score": 0,
+              "reason": "Expected output to contain \"two\"",
+              "assertion": {
+                "type": "contains",
+                "value": "two"
+              }
+            }
+          ]
+        },
+        "id": "dc5f6dde-0051-462f-8b76-4122f2e48d5c",
+        "latencyMs": 2,
+        "namedScores": {},
+        "prompt": {
+          "raw": "five minus three",
+          "label": "{{question}}",
+          "config": {}
+        },
+        "promptId": "d3bcaf71c11c2678899be04d872718325f0916b3b0705e805ee29930663a42e2",
+        "promptIdx": 0,
+        "repeatGroupId": "test-1-vars-0",
+        "repeatIndex": 1,
+        "provider": {
+          "id": "echo",
+          "label": "baseline"
+        },
+        "response": {
+          "output": "five minus three",
+          "raw": "five minus three",
+          "cost": 0,
+          "cached": false,
+          "tokenUsage": {
+            "prompt": 0,
+            "completion": 0,
+            "cached": 0,
+            "total": 0,
+            "numRequests": 1,
+            "completionDetails": {
+              "reasoning": 0,
+              "acceptedPrediction": 0,
+              "rejectedPrediction": 0,
+              "cacheReadInputTokens": 0,
+              "cacheCreationInputTokens": 0
+            },
+            "assertions": {
+              "total": 0,
+              "prompt": 0,
+              "completion": 0,
+              "cached": 0,
+              "numRequests": 0,
+              "completionDetails": {
+                "reasoning": 0,
+                "acceptedPrediction": 0,
+                "rejectedPrediction": 0,
+                "cacheReadInputTokens": 0,
+                "cacheCreationInputTokens": 0
+              }
+            }
+          },
+          "isRefusal": false,
+          "metadata": {}
+        },
+        "score": 0,
+        "success": false,
+        "testCase": {
+          "description": "subtract",
+          "vars": {
+            "question": "five minus three"
+          },
+          "assert": [
+            {
+              "type": "contains",
+              "value": "two"
+            }
+          ],
+          "options": {},
+          "metadata": {}
+        },
+        "testIdx": 3,
+        "tokenUsage": {
+          "prompt": 0,
+          "completion": 0,
+          "cached": 0,
+          "total": 0,
+          "numRequests": 1,
+          "completionDetails": {
+            "reasoning": 0,
+            "acceptedPrediction": 0,
+            "rejectedPrediction": 0,
+            "cacheReadInputTokens": 0,
+            "cacheCreationInputTokens": 0
+          },
+          "assertions": {
+            "total": 0,
+            "prompt": 0,
+            "completion": 0,
+            "cached": 0,
+            "numRequests": 0,
+            "completionDetails": {
+              "reasoning": 0,
+              "acceptedPrediction": 0,
+              "rejectedPrediction": 0,
+              "cacheReadInputTokens": 0,
+              "cacheCreationInputTokens": 0
+            }
+          }
+        },
+        "vars": {
+          "question": "five minus three"
+        },
+        "metadata": {
+          "_promptfooFileMetadata": {}
+        },
+        "failureReason": 1
+      },
+      {
+        "cost": 0,
+        "error": "Expected output to contain \"two\"",
+        "gradingResult": {
+          "pass": false,
+          "score": 0,
+          "reason": "Expected output to contain \"two\"",
+          "namedScores": {},
+          "tokensUsed": {
+            "total": 0,
+            "prompt": 0,
+            "completion": 0,
+            "cached": 0,
+            "numRequests": 0
+          },
+          "componentResults": [
+            {
+              "pass": false,
+              "score": 0,
+              "reason": "Expected output to contain \"two\"",
+              "assertion": {
+                "type": "contains",
+                "value": "two"
+              }
+            }
+          ]
+        },
+        "id": "b5e3ff21-ad6e-4397-80a7-d7743e3f853b",
+        "latencyMs": 2,
+        "namedScores": {},
+        "prompt": {
+          "raw": "five minus three",
+          "label": "{{question}}",
+          "config": {}
+        },
+        "promptId": "d3bcaf71c11c2678899be04d872718325f0916b3b0705e805ee29930663a42e2",
+        "promptIdx": 1,
+        "repeatGroupId": "test-1-vars-0",
+        "repeatIndex": 1,
+        "provider": {
+          "id": "echo",
+          "label": "candidate"
+        },
+        "response": {
+          "output": "five minus three",
+          "raw": "five minus three",
+          "cost": 0,
+          "cached": false,
+          "tokenUsage": {
+            "prompt": 0,
+            "completion": 0,
+            "cached": 0,
+            "total": 0,
+            "numRequests": 1,
+            "completionDetails": {
+              "reasoning": 0,
+              "acceptedPrediction": 0,
+              "rejectedPrediction": 0,
+              "cacheReadInputTokens": 0,
+              "cacheCreationInputTokens": 0
+            },
+            "assertions": {
+              "total": 0,
+              "prompt": 0,
+              "completion": 0,
+              "cached": 0,
+              "numRequests": 0,
+              "completionDetails": {
+                "reasoning": 0,
+                "acceptedPrediction": 0,
+                "rejectedPrediction": 0,
+                "cacheReadInputTokens": 0,
+                "cacheCreationInputTokens": 0
+              }
+            }
+          },
+          "isRefusal": false,
+          "metadata": {}
+        },
+        "score": 0,
+        "success": false,
+        "testCase": {
+          "description": "subtract",
+          "vars": {
+            "question": "five minus three"
+          },
+          "assert": [
+            {
+              "type": "contains",
+              "value": "two"
+            }
+          ],
+          "options": {},
+          "metadata": {}
+        },
+        "testIdx": 3,
+        "tokenUsage": {
+          "prompt": 0,
+          "completion": 0,
+          "cached": 0,
+          "total": 0,
+          "numRequests": 1,
+          "completionDetails": {
+            "reasoning": 0,
+            "acceptedPrediction": 0,
+            "rejectedPrediction": 0,
+            "cacheReadInputTokens": 0,
+            "cacheCreationInputTokens": 0
+          },
+          "assertions": {
+            "total": 0,
+            "prompt": 0,
+            "completion": 0,
+            "cached": 0,
+            "numRequests": 0,
+            "completionDetails": {
+              "reasoning": 0,
+              "acceptedPrediction": 0,
+              "rejectedPrediction": 0,
+              "cacheReadInputTokens": 0,
+              "cacheCreationInputTokens": 0
+            }
+          }
+        },
+        "vars": {
+          "question": "five minus three"
+        },
+        "metadata": {
+          "_promptfooFileMetadata": {}
+        },
+        "failureReason": 1
+      }
+    ],
+    "stats": {
+      "successes": 4,
+      "failures": 4,
+      "errors": 0,
+      "tokenUsage": {
+        "prompt": 0,
+        "completion": 0,
+        "cached": 0,
+        "total": 0,
+        "numRequests": 8,
+        "completionDetails": {
+          "reasoning": 0,
+          "acceptedPrediction": 0,
+          "rejectedPrediction": 0,
+          "cacheReadInputTokens": 0,
+          "cacheCreationInputTokens": 0
+        },
+        "assertions": {
+          "total": 0,
+          "prompt": 0,
+          "completion": 0,
+          "cached": 0,
+          "numRequests": 0,
+          "completionDetails": {
+            "reasoning": 0,
+            "acceptedPrediction": 0,
+            "rejectedPrediction": 0,
+            "cacheReadInputTokens": 0,
+            "cacheCreationInputTokens": 0
+          }
+        }
+      },
+      "durationMs": 38,
+      "evaluationDurationMs": 38
+    },
+    "repeatStability": {
+      "totalGroups": 4,
+      "unstableGroups": 0,
+      "groupsWithErrors": 0,
+      "cachedResults": 0,
+      "groups": [
+        {
+          "repeatGroupId": "test-0-vars-0",
+          "promptIdx": 0,
+          "provider": {
+            "id": "echo",
+            "label": "baseline"
+          },
+          "description": "add",
+          "promptLabel": "{{question}}",
+          "repetitions": 2,
+          "passed": 2,
+          "failed": 0,
+          "errors": 0,
+          "cached": 0,
+          "unstable": false,
+          "passRate": 1,
+          "passRateConfidenceInterval": {
+            "confidenceLevel": 0.95,
+            "lower": 0.34238022750665303,
+            "upper": 1
+          }
+        },
+        {
+          "repeatGroupId": "test-0-vars-0",
+          "promptIdx": 1,
+          "provider": {
+            "id": "echo",
+            "label": "candidate"
+          },
+          "description": "add",
+          "promptLabel": "{{question}}",
+          "repetitions": 2,
+          "passed": 2,
+          "failed": 0,
+          "errors": 0,
+          "cached": 0,
+          "unstable": false,
+          "passRate": 1,
+          "passRateConfidenceInterval": {
+            "confidenceLevel": 0.95,
+            "lower": 0.34238022750665303,
+            "upper": 1
+          }
+        },
+        {
+          "repeatGroupId": "test-1-vars-0",
+          "promptIdx": 0,
+          "provider": {
+            "id": "echo",
+            "label": "baseline"
+          },
+          "description": "subtract",
+          "promptLabel": "{{question}}",
+          "repetitions": 2,
+          "passed": 0,
+          "failed": 2,
+          "errors": 0,
+          "cached": 0,
+          "unstable": false,
+          "passRate": 0,
+          "passRateConfidenceInterval": {
+            "confidenceLevel": 0.95,
+            "lower": 0,
+            "upper": 0.6576197724933469
+          }
+        },
+        {
+          "repeatGroupId": "test-1-vars-0",
+          "promptIdx": 1,
+          "provider": {
+            "id": "echo",
+            "label": "candidate"
+          },
+          "description": "subtract",
+          "promptLabel": "{{question}}",
+          "repetitions": 2,
+          "passed": 0,
+          "failed": 2,
+          "errors": 0,
+          "cached": 0,
+          "unstable": false,
+          "passRate": 0,
+          "passRateConfidenceInterval": {
+            "confidenceLevel": 0.95,
+            "lower": 0,
+            "upper": 0.6576197724933469
+          }
+        }
+      ]
+    }
+  },
+  "config": {
+    "prompts": [
+      "{{question}}"
+    ],
+    "providers": [
+      {
+        "id": "echo",
+        "label": "baseline"
+      },
+      {
+        "id": "echo",
+        "label": "candidate"
+      }
+    ],
+    "tests": [
+      {
+        "description": "add",
+        "vars": {
+          "question": "two plus two is four"
+        },
+        "assert": [
+          {
+            "type": "contains",
+            "value": "four"
+          }
+        ]
+      },
+      {
+        "description": "subtract",
+        "vars": {
+          "question": "five minus three"
+        },
+        "assert": [
+          {
+            "type": "contains",
+            "value": "two"
+          }
+        ]
+      }
+    ],
+    "outputPath": [
+      "/work/output.json"
+    ],
+    "extensions": [],
+    "basePath": "/work"
+  },
+  "shareableUrl": null,
+  "metadata": {
+    "promptfooVersion": "0.125.1",
+    "nodeVersion": "v22.23.4",
+    "platform": "linux",
+    "arch": "arm64",
+    "exportedAt": "2026-11-10T13:55:07.314Z",
+    "evaluationCreatedAt": "2026-11-10T13:55:07.246Z"
+  },
+  "vars": [
+    "question"
+  ],
+  "runtimeOptions": {
+    "eventSource": "cli",
+    "showProgressBar": true,
+    "repeat": 2,
+    "maxConcurrency": 4,
+    "cache": false
+  }
+}

@@ -1,0 +1,43 @@
+{
+  "id": "00000000-0000-4000-8000-000000000000",
+  "task_name": "subtract",
+  "trial_name": "subtract__d4",
+  "trial_uri": "file://jobs/sample/subtract__d4",
+  "task_id": {
+    "path": "tasks/subtract"
+  },
+  "source": null,
+  "task_checksum": "0000000000000000000000000000000000000000000000000000000000000000",
+  "config": {},
+  "agent_info": {
+    "name": "claude-code",
+    "version": "2.1.319",
+    "model_info": {
+      "name": "claude-sonnet-5-5",
+      "provider": "anthropic"
+    }
+  },
+  "agent_result": {
+    "n_input_tokens": 1200,
+    "n_cache_tokens": 800,
+    "n_output_tokens": 300,
+    "cost_usd": 0.12,
+    "model_usage": null,
+    "metadata": null
+  },
+  "verifier_result": null,
+  "exception_info": {
+    "exception_type": "EnvironmentStartTimeoutError",
+    "exception_message": "synthetic",
+    "exception_traceback": "",
+    "occurred_at": "2026-11-01T10:02:30Z"
+  },
+  "started_at": "2026-11-01T10:00:00Z",
+  "finished_at": "2026-11-01T10:02:30Z",
+  "environment_setup": null,
+  "agent_setup": null,
+  "agent_execution": null,
+  "verifier": null,
+  "step_results": null,
+  "reward_valid": false
+}

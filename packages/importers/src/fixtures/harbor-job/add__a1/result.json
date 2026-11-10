@@ -1,0 +1,42 @@
+{
+  "id": "00000000-0000-4000-8000-000000000000",
+  "task_name": "add",
+  "trial_name": "add__a1",
+  "trial_uri": "file://jobs/sample/add__a1",
+  "task_id": {
+    "path": "tasks/add"
+  },
+  "source": null,
+  "task_checksum": "0000000000000000000000000000000000000000000000000000000000000000",
+  "config": {},
+  "agent_info": {
+    "name": "claude-code",
+    "version": "2.1.319",
+    "model_info": {
+      "name": "claude-sonnet-5-5",
+      "provider": "anthropic"
+    }
+  },
+  "agent_result": {
+    "n_input_tokens": 1200,
+    "n_cache_tokens": 800,
+    "n_output_tokens": 300,
+    "cost_usd": 0.12,
+    "model_usage": null,
+    "metadata": null
+  },
+  "verifier_result": {
+    "rewards": {
+      "reward": 1.0
+    }
+  },
+  "exception_info": null,
+  "started_at": "2026-11-01T10:00:00Z",
+  "finished_at": "2026-11-01T10:02:30Z",
+  "environment_setup": null,
+  "agent_setup": null,
+  "agent_execution": null,
+  "verifier": null,
+  "step_results": null,
+  "reward_valid": true
+}
