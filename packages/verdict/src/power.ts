@@ -1,14 +1,15 @@
 import { createPythonRandom, powerAnswer } from "@agent-evals/statistics";
 import type { ComparisonSettings } from "./compare";
 import {
-  estimateOf,
+  intervalOf,
   observedEffectOf,
+  pValueOf,
   redrawnSample,
   unitCountOf,
   unitVarianceOf,
   type UnitSample,
 } from "./sample";
-import { decideVerdict } from "./verdict";
+import { detectedDirection } from "./verdict";
 
 export type PowerPlan = {
   readonly method: "simulation" | "normal-approximation";
@@ -44,13 +45,16 @@ function reachesPower(
 
   for (let experiment = 0; experiment < simulatedExperimentCount; experiment += 1) {
     const redrawn = redrawnSample({ sample, unitCount, effect, generator });
-    const verdict = decideVerdict({
-      estimate: estimateOf({ sample: redrawn, resample }),
-      alpha: settings.alpha,
-      higherIsBetter: true,
-    });
+    const pValue = pValueOf({ sample: redrawn, resample });
+    const direction =
+      pValue < settings.alpha
+        ? detectedDirection({
+            estimate: { pValue, difference: intervalOf({ sample: redrawn, resample }) },
+            alpha: settings.alpha,
+          })
+        : "none";
 
-    if (verdict === (effect > 0 ? "better" : "worse")) {
+    if (direction === (effect > 0 ? "increase" : "decrease")) {
       detectedCount += 1;
     }
 

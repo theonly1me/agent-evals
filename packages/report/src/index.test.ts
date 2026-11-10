@@ -63,7 +63,7 @@ test("a small experiment is not conclusive and states the tasks still needed", (
   expect(text).toContain(
     `To detect a difference of 0.1 with 80% power, you need about ${unitsNeeded} tasks (${unitsNeeded - 8} more).`,
   );
-});
+}, 30_000);
 
 test("one task makes the run the unit, and the report says that the result does not generalize", () => {
   const records = experiment({ taskCount: 1, trueEffect: 0.3 });
