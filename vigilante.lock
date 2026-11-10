@@ -1,0 +1,10 @@
+version = 1
+
+[code.tooling]
+powers = ["exec"]
+
+[ci.".github/workflows"]
+powers = [
+    "third_party_action:oven-sh/setup-bun",
+    "third_party_action:theonly1me/vigilante",
+]

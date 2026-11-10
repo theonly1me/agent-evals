@@ -1,0 +1,15 @@
+{
+  "name": "@agent-evals/audit",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "scripts": {
+    "typecheck": "tsc --noEmit",
+    "test": "bun test"
+  },
+  "dependencies": {
+    "@agent-evals/records": "workspace:*"
+  }
+}

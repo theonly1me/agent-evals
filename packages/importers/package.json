@@ -1,0 +1,16 @@
+{
+  "name": "@agent-evals/importers",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "scripts": {
+    "typecheck": "tsc --noEmit",
+    "test": "bun test"
+  },
+  "dependencies": {
+    "@agent-evals/records": "workspace:*",
+    "zod": "^4.6.7"
+  }
+}

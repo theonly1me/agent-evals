@@ -1,0 +1,18 @@
+{
+  "name": "@agent-evals/report",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "scripts": {
+    "typecheck": "tsc --noEmit",
+    "test": "bun test"
+  },
+  "dependencies": {
+    "@agent-evals/audit": "workspace:*",
+    "@agent-evals/records": "workspace:*",
+    "@agent-evals/statistics": "workspace:*",
+    "@agent-evals/verdict": "workspace:*"
+  }
+}
