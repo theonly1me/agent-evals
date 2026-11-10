@@ -1,10 +1,21 @@
 version = 1
 
+[code."packages/cli"]
+powers = ["exec"]
+
 [code.tooling]
 powers = ["exec"]
 
 [ci.".github/workflows"]
 powers = [
+    "third_party_action:googleapis/release-please-action",
     "third_party_action:oven-sh/setup-bun",
     "third_party_action:theonly1me/vigilante",
+]
+
+[ci.".github/workflows/release.yml"]
+powers = [
+    "token_write:contents",
+    "token_write:pull-requests",
+    "oidc",
 ]
