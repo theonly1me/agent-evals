@@ -41,27 +41,33 @@ export function unitVarianceOf(sample: UnitSample): number {
     : sampleVariance(sample.baseline) + sampleVariance(sample.candidate);
 }
 
+export function pValueOf(options: {
+  readonly sample: UnitSample;
+  readonly resample: ResampleOptions;
+}): number {
+  const { sample, resample } = options;
+
+  return sample.unit === "task"
+    ? pairedPValue({ differences: sample.differences, resample })
+    : permutationPValue({ baseline: sample.baseline, candidate: sample.candidate, resample });
+}
+
+export function intervalOf(options: {
+  readonly sample: UnitSample;
+  readonly resample: ResampleOptions;
+}): Interval {
+  const { sample, resample } = options;
+
+  return sample.unit === "task"
+    ? pairedDifferenceInterval({ differences: sample.differences, resample })
+    : differenceInterval({ baseline: sample.baseline, candidate: sample.candidate, resample });
+}
+
 export function estimateOf(options: {
   readonly sample: UnitSample;
   readonly resample: ResampleOptions;
 }): Estimate {
-  const { sample, resample } = options;
-
-  if (sample.unit === "task") {
-    const { differences } = sample;
-
-    return {
-      difference: pairedDifferenceInterval({ differences, resample }),
-      pValue: pairedPValue({ differences, resample }),
-    };
-  }
-
-  const { baseline, candidate } = sample;
-
-  return {
-    difference: differenceInterval({ baseline, candidate, resample }),
-    pValue: permutationPValue({ baseline, candidate, resample }),
-  };
+  return { difference: intervalOf(options), pValue: pValueOf(options) };
 }
 
 function drawn(options: {
