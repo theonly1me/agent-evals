@@ -1,0 +1,25 @@
+{
+  "name": "agent-evals",
+  "version": "0.0.0",
+  "description": "The experiment harness for coding agents. Know if a change made your agent better.",
+  "license": "MIT OR Apache-2.0",
+  "repository": { "type": "git", "url": "git+https://github.com/theonly1me/agent-evals.git" },
+  "type": "module",
+  "bin": { "agent-evals": "src/cli/main.ts" },
+  "files": ["src", "LICENSE-MIT", "LICENSE-APACHE", "README.md"],
+  "scripts": {
+    "cli": "bun run src/cli/main.ts",
+    "check": "bun run typecheck && bun run lint && bun run test",
+    "typecheck": "tsc --noEmit",
+    "lint": "biome lint --error-on-warnings --diagnostic-level=warn . && bun run tooling/conventions.ts",
+    "test": "bun test"
+  },
+  "dependencies": {
+    "zod": "^4.6.7"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "2.6.4",
+    "@types/bun": "1.4.4",
+    "typescript": "5.9.3"
+  }
+}
