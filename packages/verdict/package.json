@@ -1,0 +1,17 @@
+{
+  "name": "@agent-evals/verdict",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts",
+    "./testing": "./src/simulation.ts"
+  },
+  "scripts": {
+    "typecheck": "tsc --noEmit",
+    "test": "bun test"
+  },
+  "dependencies": {
+    "@agent-evals/statistics": "workspace:*",
+    "@agent-evals/records": "workspace:*"
+  }
+}
