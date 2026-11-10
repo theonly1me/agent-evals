@@ -29,12 +29,17 @@ type PowerQuestion = {
   readonly settings: ComparisonSettings;
 };
 
-function simulatedPower(
-  options: PowerQuestion & { readonly unitCount: number; readonly effect: number },
-): number {
+function reachesPower(
+  options: PowerQuestion & {
+    readonly unitCount: number;
+    readonly effect: number;
+    readonly threshold: number;
+  },
+): boolean {
   const { sample, settings, unitCount, effect } = options;
   const generator = createPythonRandom(settings.resample.seed);
   const resample = { seed: settings.resample.seed, rounds: simulatedRounds };
+  const neededCount = Math.ceil(options.threshold * simulatedExperimentCount);
   let detectedCount = 0;
 
   for (let experiment = 0; experiment < simulatedExperimentCount; experiment += 1) {
@@ -48,9 +53,19 @@ function simulatedPower(
     if (verdict === (effect > 0 ? "better" : "worse")) {
       detectedCount += 1;
     }
+
+    const remainingCount = simulatedExperimentCount - experiment - 1;
+
+    if (detectedCount >= neededCount) {
+      return true;
+    }
+
+    if (detectedCount + remainingCount < neededCount) {
+      return false;
+    }
   }
 
-  return detectedCount / simulatedExperimentCount;
+  return false;
 }
 
 function smallestPassingCount(options: {
@@ -78,8 +93,8 @@ function simulatedUnitsNeeded(
 ): number {
   const target = options.settings.power;
   const simulationError = Math.sqrt((target * (1 - target)) / simulatedExperimentCount);
-  const passes = (unitCount: number) =>
-    simulatedPower({ ...options, unitCount }) >= target + safetyMargin * simulationError;
+  const threshold = target + safetyMargin * simulationError;
+  const passes = (unitCount: number) => reachesPower({ ...options, unitCount, threshold });
   let failing = smallestUnitCount - 1;
   let passing = Math.max(smallestUnitCount, options.start);
 
