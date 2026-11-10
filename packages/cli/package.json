@@ -2,13 +2,40 @@
   "name": "@agent-evals/cli",
   "private": true,
   "type": "module",
+  "description": "The experiment harness for coding agents. Know if a change made your agent better.",
+  "keywords": [
+    "evals",
+    "coding-agents",
+    "claude-code",
+    "codex",
+    "ab-testing",
+    "statistics"
+  ],
+  "license": "MIT OR Apache-2.0",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/theonly1me/agent-evals.git"
+  },
+  "homepage": "https://github.com/theonly1me/agent-evals#readme",
+  "bugs": {
+    "url": "https://github.com/theonly1me/agent-evals/issues"
+  },
   "bin": {
-    "agent-evals": "src/main.ts"
+    "agent-evals": "bin/agent-evals.mjs"
   },
   "exports": {
     ".": "./src/main.ts"
   },
+  "files": [
+    "bin",
+    "dist",
+    "README.md",
+    "LICENSE-MIT",
+    "LICENSE-APACHE"
+  ],
   "scripts": {
+    "build": "bun run scripts/build.ts",
+    "stage": "bun run scripts/stage.ts",
     "typecheck": "tsc --noEmit",
     "test": "bun test"
   },
@@ -16,6 +43,10 @@
     "@agent-evals/importers": "workspace:*",
     "@agent-evals/records": "workspace:*",
     "@agent-evals/report": "workspace:*",
-    "@agent-evals/verdict": "workspace:*"
+    "@agent-evals/verdict": "workspace:*",
+    "bun": "^1.4.2"
+  },
+  "devDependencies": {
+    "zod": "^4.6.7"
   }
 }

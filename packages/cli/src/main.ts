@@ -2,9 +2,9 @@
 import { compareUsage } from "./compare/arguments";
 import { runCompare } from "./compare/index";
 import { failed, succeeded, type CommandOutcome } from "./outcome";
-import release from "./version.json" with { type: "json" };
+import product from "./product.json" with { type: "json" };
 
-const usage = `agent-evals ${release.version}
+const usage = `agent-evals ${product.version}
 
 Commands:
   agent-evals compare    Give a verdict on two arms from saved results.
@@ -16,7 +16,7 @@ export async function runCommand(argumentList: readonly string[]): Promise<Comma
   const [command, ...rest] = argumentList;
 
   if (command === "--version") {
-    return succeeded(`${release.version}\n`);
+    return succeeded(`${product.version}\n`);
   }
 
   if (command === "compare") {

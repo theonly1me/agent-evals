@@ -8,7 +8,7 @@ The `agent-evals` command. It parses arguments, calls the other packages, and pr
 
 - Package name: `@agent-evals/cli`
 - Workspace dependencies: `@agent-evals/importers`, `@agent-evals/records`, `@agent-evals/report`, `@agent-evals/verdict`
-- External dependencies: none
+- External dependencies: `bun`
 - Export subpaths: `.`
 
 <!-- package-facts:end -->
@@ -17,11 +17,14 @@ The `agent-evals` command. It parses arguments, calls the other packages, and pr
 
 - `src/main.ts`: the entry point and `runCommand`.
 - `src/compare/`: the `compare` command: its arguments, the loading of one or two result locations, and the choice of arms and metric.
-- `src/version.json`: the product version, which the release process writes.
+- `src/product.json`: the product name and version. Release Please writes the version.
+- `bin/agent-evals.mjs`: the Node launcher of the published package. It finds Bun and starts the bundle.
+- `scripts/`: `build.ts` writes `dist/agent-evals.js`, and `stage.ts` writes the package to publish in `out/package`.
 
 ## Rules
 
 - Keep logic out of this package. A command calls one function of another package and formats its result.
+- The published package depends only on `bun`. Put a build-time dependency in `devDependencies`.
 - Exit with 0 on success and 1 on an error. Print each error to stderr.
 - Never guess the baseline arm or the metric. If the results permit more than one answer, stop and list the choices.
 

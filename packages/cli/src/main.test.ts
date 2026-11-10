@@ -3,7 +3,7 @@ import { mkdtemp } from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
 import { runCommand } from "./main";
-import release from "./version.json" with { type: "json" };
+import product from "./product.json" with { type: "json" };
 
 const importerFixtures = path.join(import.meta.dir, "../../importers/src/fixtures");
 const promptfooOutput = path.join(importerFixtures, "promptfoo-output.json");
@@ -27,7 +27,7 @@ test("the executable prints the version and exits with 0", async () => {
     stdout: "pipe",
   });
 
-  expect((await new Response(child.stdout).text()).trim()).toBe(release.version);
+  expect((await new Response(child.stdout).text()).trim()).toBe(product.version);
   expect(await child.exited).toBe(0);
 });
 

@@ -6,3 +6,4 @@ Each record states a problem, the decision, its consequences, and how to verify 
 | ------------------------------------------ | ---------------------------------------------------------------------------- |
 | [001](001-the-verdict-is-the-product.md)   | The verdict on a change is the product, and the task is the unit.            |
 | [002](002-results-from-other-harnesses.md) | agent-evals reads the result files of other harnesses and never starts them. |
+| [003](003-distribution.md)                 | One npm package with a bundle and a Node launcher, released from CI.         |

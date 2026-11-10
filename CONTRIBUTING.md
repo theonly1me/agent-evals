@@ -46,3 +46,9 @@ A method that can change a verdict needs three things:
 ## Pull requests
 
 Use the [PR template](.github/pull_request_template.md). Keep the body under 250 words. [AGENTS.md](AGENTS.md#handoff-and-git) sets the format of commit messages and titles.
+
+## Releasing
+
+Release Please maintains a release PR from conventional commits on `main`. Merging it creates the version tag and the GitHub release. After CI passes, a maintainer approves the `npm` environment, and the workflow publishes `agent-evals` with provenance.
+
+Use `feat:` for a minor version, `fix:` for a patch, and `!` for a breaking change. `bun run stage` writes the package to `packages/cli/out/package`. Inspect it with `npm pack --dry-run` before a release. [Design record 003](docs/design/003-distribution.md) gives the reasons.
