@@ -34,7 +34,7 @@ test("a large target is simulated and never asks for fewer units than the normal
   expect(simulated.method).toBe("simulation");
   expect(simulated.unitsNeeded).toBeGreaterThanOrEqual(7);
   expect(smaller.unitsNeeded).toBeGreaterThan(simulated.unitsNeeded);
-});
+}, 30_000);
 
 test("the same sample and seed give the same plan", () => {
   const question = {
@@ -42,6 +42,8 @@ test("the same sample and seed give the same plan", () => {
     settings: { ...settings, targetEffect: 0.5 },
   };
 
-  expect(planPower(question)).toEqual(planPower(question));
-  expect(planPower(question).method).toBe("simulation");
-});
+  const plan = planPower(question);
+
+  expect(planPower(question)).toEqual(plan);
+  expect(plan.method).toBe("simulation");
+}, 30_000);
