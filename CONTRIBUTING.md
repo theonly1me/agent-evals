@@ -49,7 +49,7 @@ Use the [PR template](.github/pull_request_template.md). Keep the body under 250
 
 ## Releasing
 
-Release Please maintains a release PR from conventional commits on `main`. Merging it creates the version tag and the GitHub release. After CI passes, a maintainer approves the `npm` environment, and the workflow publishes `agent-evals` with provenance.
+Release Please maintains a release PR from conventional commits on `main`. Merging it creates the version tag and the GitHub release. After CI passes, the workflow publishes `agent-evals` from the `npm` environment, with provenance. The repository holds no npm token. npm accepts the publish because `release.yml` is the trusted publisher of the package.
 
 The first release is 0.1.0, because `release-as` in `.github/release-please-config.json` sets it. Remove that line after the first release.
 

@@ -2,7 +2,7 @@
 
 ## Problem
 
-A person must get a first verdict with one command and no setup. The source runs on Bun, and many people who evaluate agents have Node or Python but not Bun. A release must also be safe: nobody publishes from a laptop.
+A person must get a first verdict with one command and no setup. The source runs on Bun, and many people who evaluate agents have Node or Python but not Bun. A release must also be safe: after the first release, nobody publishes from a laptop.
 
 ## Decision
 
@@ -19,7 +19,8 @@ The first plan was a compiled binary for each platform. The bundle is 122 KB, ag
 ## Consequences
 
 - The first install downloads Bun through npm, which takes a few seconds.
-- The maintainer must set an npm trusted publisher for `agent-evals` and an `npm` environment in the repository before the first release.
+- The maintainer publishes 0.1.0 by hand, because npm sets a trusted publisher only on a package that exists. That version has no provenance.
+- After 0.1.0, the maintainer sets `release.yml` and the `npm` environment as the npm trusted publisher of `agent-evals`.
 - The build fails if the bundle holds a path of the build machine.
 
 ## Verification

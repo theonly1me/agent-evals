@@ -4,7 +4,7 @@ The experiment harness for coding agents. It answers one question: did this chan
 
 You change a skill, an instruction file, a prompt, a model, or a tool. agent-evals compares the runs before and after the change. It gives one verdict: better, worse, or not conclusive. If the verdict is not conclusive, it tells you how many more tasks you need.
 
-**Status:** in development. The `compare` command works on saved results. The runner comes next.
+**Status:** release 0.1. The `compare` command works on saved results. The runner comes next.
 
 ## Compare two sets of results
 
@@ -16,9 +16,14 @@ agent-evals reads the results that you already have:
 - a JSONL file of [run records](packages/records/AGENTS.md)
 
 ```bash
-git clone https://github.com/theonly1me/agent-evals && cd agent-evals
-bun install
-bun run cli compare examples/quick-start/runs.jsonl --baseline without-skill
+npx agent-evals compare <baseline results> <candidate results>
+```
+
+The command needs only Node. To see a verdict before you use your own results, get the example records:
+
+```bash
+curl -fsSLO https://raw.githubusercontent.com/theonly1me/agent-evals/main/examples/quick-start/runs.jsonl
+npx agent-evals compare runs.jsonl --baseline without-skill
 ```
 
 ```text
@@ -26,7 +31,7 @@ with-skill is better than without-skill on passed.
 Difference: +0.208 (95% interval 0.056 to 0.361, p = 0.029) over 24 tasks. without-skill: 0.403. with-skill: 0.611.
 ```
 
-The report also has a validity audit. It shows which checks passed, which failed, and which nobody made. The [quick start example](examples/quick-start/README.md) describes the records in this run. With two result sets, pass both locations: the first is the baseline.
+The report also has a validity audit. It shows which checks passed, which failed, and which nobody made. The [quick start example](examples/quick-start/README.md) describes the records in this run. If one file holds both arms, name the baseline arm with `--baseline`. With two result sets, the first location is the baseline.
 
 ## How the verdict works
 
