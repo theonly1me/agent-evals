@@ -42,6 +42,27 @@ test("two result locations compare the first as the baseline and the second as t
   expect(outcome.stdout).toContain("Difference: +1 (95% interval 1 to 1, p = 0.008) over 8 tasks.");
 });
 
+test("an arm name that is not in the results gets an error that names the option and the arm", async () => {
+  const baseline = await runCommand(["compare", promptfooOutput, "--baseline", "control"]);
+  const candidate = await runCommand([
+    "compare",
+    promptfooOutput,
+    "--baseline",
+    "baseline",
+    "--candidate",
+    "treatment",
+  ]);
+
+  expect(baseline.exitCode).toBe(1);
+  expect(baseline.stderr).toBe(
+    'The results have no arm "control" for --baseline. The arms are: baseline, candidate.\n',
+  );
+  expect(candidate.exitCode).toBe(1);
+  expect(candidate.stderr).toBe(
+    'The results have no arm "treatment" for --candidate. The arms are: baseline, candidate.\n',
+  );
+});
+
 test("one location needs a named baseline, and takes the other arm as the candidate", async () => {
   const unnamed = await runCommand(["compare", promptfooOutput, "--metric", "success"]);
   const named = await runCommand([
