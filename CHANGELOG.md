@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.1.1](https://github.com/theonly1me/agent-evals/compare/v0.1.0...v0.1.1) (2026-11-17)
+
+
+### Fixes
+
+* **cli:** name the arm that is not in the results ([#12](https://github.com/theonly1me/agent-evals/issues/12)) ([81c9eac](https://github.com/theonly1me/agent-evals/commit/81c9eac0a4e0fbc559f225c6529779ddf35dcfb1))
+
 ## 0.1.0 (2026-11-17)
 
 
