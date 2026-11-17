@@ -35,6 +35,7 @@ export const sandboxNames = ["host", "docker"] as const;
 
 const agentSchema = z.strictObject({
   agent: z.enum(agentNames),
+  program: z.string().min(1).optional(),
   model: z.string().min(1).optional(),
   flags: z.array(z.string()).default([]),
 });
