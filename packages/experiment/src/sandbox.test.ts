@@ -13,10 +13,9 @@ import { storeOf } from "./store";
 import { type SampleOptions, writeSampleExperiment } from "./testing/sample";
 
 const dockerImage = "alpine:3.20";
-const dockerAnswers = Bun.spawnSync(["docker", "version"], {
-  stdout: "ignore",
-  stderr: "ignore",
-}).success;
+const dockerAnswers =
+  Bun.which("docker") !== null &&
+  Bun.spawnSync(["docker", "version"], { stdout: "ignore", stderr: "ignore" }).success;
 
 const shellSubject = `#!/bin/sh
 cat > /dev/null
