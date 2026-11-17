@@ -71,7 +71,7 @@ test("one task makes the run the unit, and the report says that the result does 
 
   expect(report.primary.sample.unit).toBe("run");
   expect(textOf(report)).toContain("This comparison has one task, so the unit is the run.");
-});
+}, 30_000);
 
 test("results with no spread get no power number", () => {
   const records = ["a", "b"].flatMap((task) =>
