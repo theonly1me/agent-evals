@@ -51,6 +51,16 @@ function chooseArms(options: {
     return `Name the baseline arm with --baseline. ${listed}`;
   }
 
+  const named = [
+    { option: "--baseline", arm: request.baseline },
+    { option: "--candidate", arm: request.candidate },
+  ];
+  const missing = named.find(({ arm }) => arm !== undefined && !available.includes(arm));
+
+  if (missing !== undefined) {
+    return `The results have no arm "${missing.arm}" for ${missing.option}. ${listed}`;
+  }
+
   const others = available.filter((arm) => arm !== request.baseline);
   const [onlyOther, ...moreOthers] = others;
   const candidate = request.candidate ?? (moreOthers.length === 0 ? onlyOther : undefined);
@@ -59,9 +69,7 @@ function chooseArms(options: {
     return `Name the candidate arm with --candidate. ${listed}`;
   }
 
-  const unknown = [request.baseline, candidate].filter((arm) => !available.includes(arm));
-
-  if (unknown.length > 0 || candidate === request.baseline) {
+  if (candidate === request.baseline) {
     return `--baseline and --candidate must name two different arms. ${listed}`;
   }
 
