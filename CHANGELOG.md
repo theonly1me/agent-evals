@@ -1,5 +1,15 @@
 # Changelog
 
+## [0.2.0](https://github.com/theonly1me/agent-evals/compare/v0.1.1...v0.2.0) (2026-11-17)
+
+
+### Features
+
+* **examples:** port the no-comments study to an agent-evals experiment ([#19](https://github.com/theonly1me/agent-evals/issues/19)) ([a5907a5](https://github.com/theonly1me/agent-evals/commit/a5907a509af39938840f0f992ce5aafa22a4301c))
+* **experiment:** add blind judges and a stop rule at the registered looks ([#18](https://github.com/theonly1me/agent-evals/issues/18)) ([f4905ba](https://github.com/theonly1me/agent-evals/commit/f4905ba553642bcb325e93c8c2352210e4a4b527))
+* **experiment:** add the docker sandbox, the canary probe, and the claude-code and codex subjects ([#17](https://github.com/theonly1me/agent-evals/issues/17)) ([d8cdebe](https://github.com/theonly1me/agent-evals/commit/d8cdebe2e78e4ecc2b9b24da0180fb895d2b3ab6))
+* run a frozen experiment with agent-evals init, freeze, and run ([#15](https://github.com/theonly1me/agent-evals/issues/15)) ([618d840](https://github.com/theonly1me/agent-evals/commit/618d84075a98f8f24c65b8ea8042a819d86addd2))
+
 ## [0.1.1](https://github.com/theonly1me/agent-evals/compare/v0.1.0...v0.1.1) (2026-11-17)
 
 
