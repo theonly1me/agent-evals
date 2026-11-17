@@ -4,7 +4,7 @@ The experiment harness for coding agents. It answers one question: did this chan
 
 You change a skill, an instruction file, a prompt, a model, or a tool. agent-evals compares the runs before and after the change. It gives one verdict: better, worse, or not conclusive. If the verdict is not conclusive, it tells you how many more tasks you need.
 
-**Status:** the `compare` command gives a verdict on saved results. The runner works with a command as the subject. Sandboxes for Claude Code and Codex come next.
+**Status:** the `compare` command gives a verdict on saved results. The runner starts a command, Claude Code, or Codex, on the host or in Docker.
 
 ## Compare two sets of results
 
@@ -46,9 +46,10 @@ npx @theonly1me/agent-evals run my-experiment
 - **`freeze` records the design.** If the metric, a task, or an input file changes later, `run` stops and names the change.
 - **The order is random.** A seed mixes the tasks and the order of the arms, so no arm always runs first.
 - **The grader is blind.** It gets the task and the workspace, and never the arm.
-- **Each run is separate.** The subject gets a new workspace, a new home folder, and only the environment variables that you name.
+- **Each run is separate.** The subject gets a new workspace, a new home folder, and only the environment variables that you name. A probe checks this before the first run.
+- **The subject is a command or an agent.** `subject: { agent: claude-code }` and `subject: { agent: codex }` start the agent on the host or in Docker.
 
-[Design record 005](docs/design/005-the-experiment-core.md) describes the experiment file and the process protocol.
+[Design record 005](docs/design/005-the-experiment-core.md) describes the experiment file and the process protocol. [Design record 006](docs/design/006-sandboxes-and-agent-subjects.md) describes the sandboxes and the agent subjects.
 
 ## How the verdict works
 

@@ -29,6 +29,13 @@ const programSchema = z.strictObject({
   command: z.array(z.string().min(1)).min(1, "a command needs a program"),
 });
 
+export const agentNames = ["claude-code", "codex"] as const;
+export const sandboxNames = ["host", "docker"] as const;
+
+const agentSchema = z.strictObject({ agent: z.enum(agentNames) });
+
+const authSchema = z.strictObject({ files: overlaySchema.default({}) });
+
 const experimentSchema = z.strictObject({
   name: z.string().min(1),
   metric: z.string().min(1),
@@ -36,7 +43,10 @@ const experimentSchema = z.strictObject({
   baseline: z.string().min(1),
   arms: z.record(nameSchema, armSchema),
   tasks: z.array(taskSchema).min(1, "an experiment needs a task"),
-  subject: programSchema,
+  subject: z.union([programSchema, agentSchema]),
+  sandbox: z.enum(sandboxNames).default("host"),
+  image: z.string().min(1).optional(),
+  auth: authSchema.default({ files: {} }),
   grader: programSchema,
   repeats: z.number().int().positive().default(1),
   seed: z.number().int().nonnegative().default(20261007),
@@ -51,6 +61,8 @@ const experimentSchema = z.strictObject({
 export type Arm = z.infer<typeof armSchema>;
 export type Task = z.infer<typeof taskSchema>;
 export type Program = z.infer<typeof programSchema>;
+export type AgentName = (typeof agentNames)[number];
+export type SandboxName = (typeof sandboxNames)[number];
 export type ExperimentSpec = z.infer<typeof experimentSchema>;
 export type Experiment = ExperimentSpec & {
   readonly directory: string;
@@ -121,6 +133,9 @@ function designProblems(spec: ExperimentSpec): readonly string[] {
       ? `tasks: "${promptless[0]?.id}" needs one of prompt and promptFile`
       : null,
     looksAscend ? null : "looks: write the task counts in ascending order",
+    spec.sandbox === "docker" && spec.image === undefined
+      ? "image: the docker sandbox needs an image"
+      : null,
     lastLook > spec.tasks.length
       ? `looks: the look at ${lastLook} tasks is after the last of ${spec.tasks.length} tasks`
       : null,

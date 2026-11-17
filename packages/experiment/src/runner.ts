@@ -1,16 +1,17 @@
 import { cp, mkdir } from "node:fs/promises";
+import os from "node:os";
 import path from "node:path";
 import type { RunRecord } from "@agent-evals/records";
+import { canaryVariable } from "./canary";
 import type { Lock } from "./lock";
 import { runProcess } from "./process";
 import {
   type GraderRequest,
   protocolVersion,
   readGraderResponse,
-  readSubjectResponse,
   type SubjectRequest,
 } from "./protocol";
-import { inheritedEnvironment, type Sandbox } from "./sandbox";
+import { namedEnvironment, type RunPaths, type Sandbox } from "./sandbox";
 import { buildSchedule, type Cell, cellKey, type TaskBlock } from "./schedule";
 import { type Arm, type Experiment, promptOf, type Task } from "./spec";
 import {
@@ -24,6 +25,7 @@ import {
   workDirectoryOf,
   workNameOf,
 } from "./store";
+import { subjectProgram } from "./subjects";
 
 export type StopReason = "complete" | "run-limit" | "cost-limit" | "look";
 
@@ -40,6 +42,8 @@ export type RunOptions = {
   readonly experiment: Experiment;
   readonly lock: Lock;
   readonly sandbox: Sandbox;
+  readonly canaryToken?: string;
+  readonly realHome?: string;
   readonly onAttempt?: (attempt: Attempt) => void;
   readonly atLook?: (look: {
     readonly tasksDone: number;
@@ -48,22 +52,37 @@ export type RunOptions = {
 };
 
 type CellContext = {
-  readonly experiment: Experiment;
-  readonly lock: Lock;
-  readonly sandbox: Sandbox;
+  readonly run: RunOptions;
   readonly store: Store;
   readonly cell: Cell;
   readonly attempt: number;
+  readonly versions: VersionReader;
 };
 
+type VersionReader = (options: {
+  readonly command: readonly string[] | null;
+  readonly label: string;
+  readonly paths: RunPaths;
+  readonly image: string | undefined;
+}) => Promise<Readonly<Record<string, string>> | undefined>;
+
+const versionSeconds = 60;
+
+function sourceOf(options: { readonly source: string; readonly realHome: string }): string {
+  return options.source.startsWith("~/")
+    ? path.join(options.realHome, options.source.slice(2))
+    : options.source;
+}
+
 async function copyOverlay(options: {
-  readonly experiment: Experiment;
+  readonly sourceRoot: string;
   readonly overlay: Readonly<Record<string, string>>;
   readonly target: string;
+  readonly realHome: string;
 }): Promise<void> {
   for (const [destination, source] of Object.entries(options.overlay)) {
     await cp(
-      path.join(options.experiment.directory, source),
+      path.resolve(options.sourceRoot, sourceOf({ source, realHome: options.realHome })),
       path.join(options.target, destination),
       { recursive: true },
     );
@@ -74,28 +93,36 @@ async function prepareDirectories(options: {
   readonly context: CellContext;
   readonly task: Task;
   readonly arm: Arm;
-}): Promise<{ readonly workspace: string; readonly home: string }> {
+}): Promise<RunPaths> {
   const { context, task, arm } = options;
+  const { experiment } = context.run;
   const root = workDirectoryOf(context);
   const workspace = path.join(root, "workspace");
   const home = path.join(root, "home");
+  const shared = {
+    sourceRoot: experiment.directory,
+    realHome: context.run.realHome ?? os.homedir(),
+  };
 
   await mkdir(workspace, { recursive: true });
   await mkdir(home, { recursive: true });
 
   if (task.workspace !== undefined) {
-    await cp(path.join(context.experiment.directory, task.workspace), workspace, {
-      recursive: true,
-    });
+    await cp(path.join(experiment.directory, task.workspace), workspace, { recursive: true });
   }
 
-  await copyOverlay({ experiment: context.experiment, overlay: arm.files, target: workspace });
-  await copyOverlay({ experiment: context.experiment, overlay: arm.home, target: home });
+  await copyOverlay({ ...shared, overlay: arm.files, target: workspace });
+  await copyOverlay({ ...shared, overlay: experiment.auth.files, target: home });
+  await copyOverlay({ ...shared, overlay: arm.home, target: home });
 
-  return { workspace, home };
+  return { workspace, home, experiment: experiment.directory };
 }
 
-function resolvedCommand(options: {
+function hostEnvironment(): Record<string, string> {
+  return namedEnvironment({ source: process.env, names: Object.keys(process.env) });
+}
+
+function resolvedOnHost(options: {
   readonly experiment: Experiment;
   readonly command: readonly string[];
 }): readonly string[] {
@@ -104,21 +131,44 @@ function resolvedCommand(options: {
   );
 }
 
-function hostEnvironment(): Record<string, string> {
-  return Object.fromEntries(
-    Object.entries(process.env).flatMap(([name, value]) =>
-      value === undefined ? [] : [[name, value]],
-    ),
-  );
+function versionReader(sandbox: Sandbox): VersionReader {
+  const known = new Map<string, Readonly<Record<string, string>> | undefined>();
+
+  return async ({ command, label, paths, image }) => {
+    const key = `${label}\u0000${image ?? ""}`;
+
+    if (command === null || known.has(key)) {
+      return known.get(key);
+    }
+
+    const result = await sandbox.run({
+      name: `agent-evals-version-${crypto.randomUUID().slice(0, 8)}`,
+      command,
+      input: "",
+      paths,
+      environment: {},
+      timeoutSeconds: versionSeconds,
+      image,
+    });
+    const versions =
+      result.status === "exited" && result.exitCode === 0
+        ? { [label]: result.stdout.trim().split("\n")[0] ?? "" }
+        : undefined;
+
+    known.set(key, versions);
+
+    return versions;
+  };
 }
 
 async function runCell(context: CellContext): Promise<Attempt> {
-  const { experiment, cell, sandbox } = context;
+  const { run, cell } = context;
+  const { experiment, sandbox } = run;
   const base = {
     ...cell,
     attempt: context.attempt,
-    subject: path.basename(experiment.subject.command[0] ?? sandbox.name),
-    design: context.lock.digest,
+    design: run.lock.digest,
+    isolation: sandbox.isolation,
     work: workNameOf(context),
   };
   const task = experiment.tasks.find((candidate) => candidate.id === cell.task);
@@ -134,51 +184,76 @@ async function runCell(context: CellContext): Promise<Attempt> {
   }
 
   const prompt = await promptOf({ experiment, task });
-  const { workspace, home } = await prepareDirectories({ context, task, arm });
+  const paths = await prepareDirectories({ context, task, arm });
+  const located = sandbox.locate(paths);
+  const image = arm.image ?? experiment.image;
   const subjectRequest: SubjectRequest = {
     protocol: protocolVersion,
     kind: "subject",
     task: { id: task.id, prompt },
     arm: { name: cell.arm, flags: arm.flags, model: arm.model },
-    workspace,
-    home,
+    workspace: located.workspace,
+    home: located.home,
     timeoutSeconds: experiment.timeoutSeconds,
   };
+  const program = subjectProgram({
+    experiment,
+    request: subjectRequest,
+    experimentDirectory: located.experiment,
+  });
+  const agentVersions = await context.versions({
+    command: program.versionCommand,
+    label: program.label,
+    paths,
+    image,
+  });
   const startedAt = performance.now();
-  const subject = readSubjectResponse(
+  const subject = program.read(
     await sandbox.run({
-      command: resolvedCommand({ experiment, command: experiment.subject.command }),
-      input: JSON.stringify(subjectRequest),
-      workingDirectory: workspace,
-      homeDirectory: home,
+      name: `agent-evals-${base.work}`,
+      command: program.command,
+      input: program.input,
+      paths,
       environment: {
-        ...inheritedEnvironment({ source: process.env, passEnv: experiment.passEnv }),
+        ...namedEnvironment({ source: process.env, names: experiment.passEnv }),
         ...arm.env,
       },
       timeoutSeconds: experiment.timeoutSeconds,
+      image,
     }),
   );
+  const versions = { ...agentVersions, ...subject.versions };
   const measured = {
     ...base,
+    subject: program.label,
     durationSeconds: (performance.now() - startedAt) / 1000,
     costUsd: subject.costUsd,
-    versions: subject.versions,
+    versions: Object.keys(versions).length > 0 ? versions : undefined,
   };
 
   if (subject.status === "infra-failure") {
     return { ...measured, status: "infra-failure", scores: {}, detail: subject.detail };
   }
 
+  if (run.canaryToken !== undefined && subject.output.includes(run.canaryToken)) {
+    return {
+      ...measured,
+      status: "infra-failure",
+      scores: {},
+      detail: `the subject read ${canaryVariable} of the runner`,
+    };
+  }
+
   const graderRequest: GraderRequest = {
     protocol: protocolVersion,
     kind: "grader",
     task: { id: task.id, prompt },
-    workspace,
+    workspace: paths.workspace,
     output: subject.output,
   };
   const grade = readGraderResponse(
     await runProcess({
-      command: resolvedCommand({ experiment, command: experiment.grader.command }),
+      command: resolvedOnHost({ experiment, command: experiment.grader.command }),
       input: JSON.stringify(graderRequest),
       workingDirectory: experiment.directory,
       environment: hostEnvironment(),
@@ -223,8 +298,9 @@ async function runBlock(options: {
   readonly store: Store;
   readonly block: TaskBlock;
   readonly attempts: Attempt[];
+  readonly versions: VersionReader;
 }): Promise<StopReason | null> {
-  const { run, store, block, attempts } = options;
+  const { run, store, block, attempts, versions } = options;
 
   for (const cell of block.cells) {
     let attempt = nextAttemptOf({
@@ -239,14 +315,7 @@ async function runBlock(options: {
         return limit;
       }
 
-      const result = await runCell({
-        experiment: run.experiment,
-        lock: run.lock,
-        sandbox: run.sandbox,
-        store,
-        cell,
-        attempt,
-      });
+      const result = await runCell({ run, store, cell, attempt, versions });
 
       await appendAttempt({ store, attempt: result });
       attempts.push(result);
@@ -262,6 +331,7 @@ export async function runExperiment(run: RunOptions): Promise<RunSummary> {
   const store = storeOf(run.experiment);
   const attempts = [...(await readAttempts(store))];
   const startCount = attempts.length;
+  const versions = versionReader(run.sandbox);
   const summaryOf = (options: { reason: StopReason; tasksDone: number }): RunSummary => ({
     ...options,
     newAttempts: attempts.length - startCount,
@@ -270,7 +340,7 @@ export async function runExperiment(run: RunOptions): Promise<RunSummary> {
   const blocks = buildSchedule(run.experiment);
 
   for (const [index, block] of blocks.entries()) {
-    const limit = await runBlock({ run, store, block, attempts });
+    const limit = await runBlock({ run, store, block, attempts, versions });
     const tasksDone = index + 1;
 
     if (limit !== null) {
