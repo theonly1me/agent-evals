@@ -98,6 +98,24 @@ test("the isolation check names the level, and fails when a run has no record of
   });
 });
 
+test("the judge order check fails when a judged run had one order only", () => {
+  const both = [run({ judgeOrders: 2 }), run({ arm: "after", judgeOrders: 2 })];
+  const single = [run({ judgeOrders: 2 }), run({ arm: "after", judgeOrders: 1 })];
+  const orderOf = (records: readonly RunRecord[]) =>
+    auditRecords({ records, arms }).find((check) => check.id === "judge-order");
+
+  expect(orderOf(both)).toMatchObject({
+    status: "passed",
+    detail: "The pairwise judge saw the pair of each of the 2 judged runs in both orders.",
+  });
+  expect(orderOf(single)).toMatchObject({
+    status: "failed",
+    detail:
+      "1 of 2 judged runs had one order only, so the position of an entry can change the score.",
+  });
+  expect(orderOf([run({}), run({ arm: "after" })])).toMatchObject({ status: "not-checked" });
+});
+
 test("the design check passes for one digest, and fails for a mixed or a missing digest", () => {
   const frozen = [run({ design: "aaaa" }), run({ arm: "after", design: "aaaa" })];
   const changed = [run({ design: "aaaa" }), run({ arm: "after", design: "bbbb" })];

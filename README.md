@@ -47,9 +47,11 @@ npx @theonly1me/agent-evals run my-experiment
 - **The order is random.** A seed mixes the tasks and the order of the arms, so no arm always runs first.
 - **The grader is blind.** It gets the task and the workspace, and never the arm.
 - **Each run is separate.** The subject gets a new workspace, a new home folder, and only the environment variables that you name. A probe checks this before the first run.
+- **It stops when the answer is clear.** `looks` names the task counts at which the runner tests the result. The 5% level is split across the analyses, so an early stop stays valid.
+- **Judges are blind and see both orders.** A pairwise judge compares the two arms on one task as entry A and entry B, then with the entries swapped.
 - **The subject is a command or an agent.** `subject: { agent: claude-code }` and `subject: { agent: codex }` start the agent on the host or in Docker.
 
-[Design record 005](docs/design/005-the-experiment-core.md) describes the experiment file and the process protocol. [Design record 006](docs/design/006-sandboxes-and-agent-subjects.md) describes the sandboxes and the agent subjects.
+[Design record 005](docs/design/005-the-experiment-core.md) describes the experiment file and the process protocol. [Design record 006](docs/design/006-sandboxes-and-agent-subjects.md) describes the sandboxes and the agent subjects. [Design record 007](docs/design/007-judges-and-the-stop-rule.md) describes the judges and the stop rule.
 
 ## How the verdict works
 

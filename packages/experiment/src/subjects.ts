@@ -99,7 +99,7 @@ function readCodex(result: ProcessResult): SubjectResponse {
   };
 }
 
-function agentProgram(options: {
+export function agentProgram(options: {
   readonly agent: AgentName;
   readonly request: SubjectRequest;
 }): SubjectProgram {

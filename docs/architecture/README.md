@@ -24,7 +24,7 @@ flowchart LR
 | `@agent-evals/audit`      | Checks if the records support a fair comparison.             | `records`                                                 |
 | `@agent-evals/verdict`    | The comparison of two arms, the verdict, and the power plan. | `statistics`, `records`                                   |
 | `@agent-evals/report`     | Builds and renders the report.                               | `statistics`, `records`, `audit`, `verdict`               |
-| `@agent-evals/experiment` | Runs a frozen experiment and writes run records.             | `statistics`, `records`                                   |
+| `@agent-evals/experiment` | Runs a frozen experiment and writes run records.             | `statistics`, `records`, `verdict`                        |
 | `@agent-evals/cli`        | The `agent-evals` command.                                   | `records`, `importers`, `verdict`, `report`, `experiment` |
 
 `tooling/src/boundaries/packages.ts` holds this graph, and `bun run lint` checks every import against it.

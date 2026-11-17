@@ -44,6 +44,7 @@
       "dependencies": {
         "@agent-evals/records": "workspace:*",
         "@agent-evals/statistics": "workspace:*",
+        "@agent-evals/verdict": "workspace:*",
         "zod": "^4.6.7",
       },
     },

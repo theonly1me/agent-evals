@@ -23,7 +23,7 @@ export const packageLayout: PackageLayout = {
     audit: ["records"],
     verdict: ["statistics", "records"],
     report: ["statistics", "records", "audit", "verdict"],
-    experiment: ["statistics", "records"],
+    experiment: ["statistics", "records", "verdict"],
     cli: ["records", "importers", "verdict", "report", "experiment"],
   },
 };
