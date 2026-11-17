@@ -21,9 +21,12 @@ export {
   runExperiment,
   type StopReason,
 } from "./runner";
-export { hostSandbox, type Sandbox } from "./sandbox";
+export { canaryVariable, type IsolationProbe, probeIsolation } from "./canary";
+export { dockerProblem, dockerSandbox } from "./docker";
+export { hostSandbox, type IsolationLevel, type Sandbox } from "./sandbox";
 export { buildSchedule, type Cell, type TaskBlock } from "./schedule";
 export {
+  type AgentName,
   type Arm,
   type Experiment,
   type ExperimentSpec,

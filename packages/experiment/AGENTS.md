@@ -21,12 +21,17 @@ The runner: it reads an experiment, freezes its design, runs each arm on each ta
 - `src/runner.ts`: `runExperiment`, with the overlays, the retries, the limits, and the looks.
 - `src/protocol.ts`: the JSON requests and responses of a subject and of a grader.
 - `src/sandbox.ts`: the `Sandbox` type and the host sandbox.
+- `src/docker.ts`: the Docker sandbox and its command line.
+- `src/canary.ts`: the isolation probe that runs before the first run.
+- `src/subjects.ts`: the command subject and the subjects for Claude Code and Codex.
 - `src/store.ts`: the attempts in `.agent-evals/runs.jsonl` and the work folders.
 
 ## Rules
 
 - A grader request never holds the arm, and a work folder name never shows it.
 - The subject gets only the environment variables that the experiment names.
+- Name an environment variable on the Docker command line. Never put its value there.
+- An error result of an agent is an infrastructure failure.
 - An infrastructure failure has no score. Record each attempt, and never remove one.
 - A change to the design or to an input file after the freeze stops the run.
 - Return a problem as a value with the name of the field or the file. Do not throw for bad input.

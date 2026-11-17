@@ -43,6 +43,7 @@ test("a run gives each arm its overlay, and each record carries the score and th
   expect(meanOf({ records: summary.records, arm: "plain" })).toBe(0);
   expect(summary.records.every((record) => record.design === lock.digest)).toBe(true);
   expect(summary.records.every((record) => record.status === "completed")).toBe(true);
+  expect(summary.records.every((record) => record.isolation === "home")).toBe(true);
   expect(summary.records[0]?.costUsd).toBe(0.25);
   expect(summary.records[0]?.versions).toEqual({ subject: "1.0.0" });
 });
@@ -171,4 +172,30 @@ test("a registered look can stop the experiment, and it sees only complete tasks
   expect(summary.reason).toBe("look");
   expect(summary.tasksDone).toBe(2);
   expect(summary.records).toHaveLength(8);
+});
+
+test("a subject that prints the canary of the runner is a failure", async () => {
+  const { experiment, lock } = await frozenSample({
+    tasks: ["a"],
+    spec: {
+      repeats: 1,
+      retries: 0,
+      subject: {
+        command: [process.execPath, "-e", 'console.log(JSON.stringify({ output: "token-123" }))'],
+      },
+    },
+  });
+  const summary = await runExperiment({
+    experiment,
+    lock,
+    sandbox: hostSandbox,
+    canaryToken: "token-123",
+  });
+  const [first] = await readAttempts(storeOf(experiment));
+
+  expect(summary.records.map((record) => record.status)).toEqual([
+    "infra-failure",
+    "infra-failure",
+  ]);
+  expect(first?.detail).toBe("the subject read AGENT_EVALS_CANARY of the runner");
 });

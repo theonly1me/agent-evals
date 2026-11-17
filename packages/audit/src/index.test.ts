@@ -73,6 +73,31 @@ test("a version that changes inside one arm fails, and a version that differs be
   expect(check).toMatchObject({ status: "passed", detail: "The arms differ in: model." });
 });
 
+test("the isolation check names the level, and fails when a run has no record of it", () => {
+  const container = [
+    run({ isolation: "container" }),
+    run({ arm: "after", isolation: "container" }),
+  ];
+  const host = [run({ isolation: "home" }), run({ arm: "after", isolation: "home" })];
+  const partial = [run({ isolation: "home" }), run({ arm: "after" })];
+  const isolationOf = (records: readonly RunRecord[]) =>
+    auditRecords({ records, arms }).find((check) => check.id === "isolation");
+
+  expect(isolationOf(container)).toMatchObject({
+    status: "passed",
+    detail: "Each of the 2 runs was in a container with a new home folder.",
+  });
+  expect(isolationOf(host)).toMatchObject({
+    status: "passed",
+    detail:
+      "Each of the 2 runs had a new home folder and a clean environment. 2 ran on the host, which does not block a read by an absolute path.",
+  });
+  expect(isolationOf(partial)).toMatchObject({
+    status: "failed",
+    detail: "1 of 2 runs carry no isolation record.",
+  });
+});
+
 test("the design check passes for one digest, and fails for a mixed or a missing digest", () => {
   const frozen = [run({ design: "aaaa" }), run({ arm: "after", design: "aaaa" })];
   const changed = [run({ design: "aaaa" }), run({ arm: "after", design: "bbbb" })];

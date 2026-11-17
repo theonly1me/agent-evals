@@ -13,6 +13,7 @@ export const runRecordSchema = z.object({
   costUsd: z.number().nonnegative().optional(),
   versions: z.record(z.string(), z.string()).optional(),
   design: z.string().optional(),
+  isolation: z.enum(["home", "container"]).optional(),
 });
 
 export type RunRecord = z.infer<typeof runRecordSchema>;

@@ -3,14 +3,19 @@ import path from "node:path";
 import { parseArgs } from "node:util";
 import {
   type Attempt,
+  canaryVariable,
   checkLock,
+  dockerProblem,
+  dockerSandbox,
   type Experiment,
   freezeExperiment,
   hostSandbox,
   loadExperiment,
   lockFileName,
+  probeIsolation,
   type RunSummary,
   runExperiment,
+  storeOf,
 } from "@agent-evals/experiment";
 import { buildReport, renderReport, type ReportFormat, reportFormats } from "@agent-evals/report";
 import { defaultComparisonSettings } from "@agent-evals/verdict";
@@ -160,6 +165,19 @@ function reportsOf(options: {
   });
 }
 
+async function withCanary<Result>(options: {
+  readonly token: string;
+  readonly run: () => Promise<Result>;
+}): Promise<Result> {
+  process.env[canaryVariable] = options.token;
+
+  try {
+    return await options.run();
+  } finally {
+    delete process.env[canaryVariable];
+  }
+}
+
 export async function runRun(options: {
   readonly argumentList: readonly string[];
   readonly onProgress: Progress;
@@ -183,16 +201,36 @@ export async function runRun(options: {
     return failed(lockCheck.problem);
   }
 
+  const sandbox = experiment.sandbox === "docker" ? dockerSandbox : hostSandbox;
+  const sandboxProblem = experiment.sandbox === "docker" ? await dockerProblem() : null;
+
+  if (sandboxProblem !== null) {
+    return failed(sandboxProblem);
+  }
+
+  const probe = await probeIsolation({ sandbox, experiment, store: storeOf(experiment) });
+
+  if (probe.status !== "isolated") {
+    return failed(probe.problem);
+  }
+
+  options.onProgress(`The isolation probe passed for the ${sandbox.name} sandbox.`);
+
   const total = experiment.tasks.length * Object.keys(experiment.arms).length * experiment.repeats;
   let count = 0;
-  const summary = await runExperiment({
-    experiment,
-    lock: lockCheck.lock,
-    sandbox: hostSandbox,
-    onAttempt: (attempt) => {
-      count += attempt.attempt === 0 ? 1 : 0;
-      options.onProgress(progressLine({ attempt, count, total }));
-    },
+  const summary = await withCanary({
+    token: probe.token,
+    run: () =>
+      runExperiment({
+        experiment,
+        lock: lockCheck.lock,
+        sandbox,
+        canaryToken: probe.token,
+        onAttempt: (attempt) => {
+          count += attempt.attempt === 0 ? 1 : 0;
+          options.onProgress(progressLine({ attempt, count, total }));
+        },
+      }),
   });
   const note = stopNote({ summary, experiment });
   const reports = reportsOf({ experiment, summary, format: parsed.format });

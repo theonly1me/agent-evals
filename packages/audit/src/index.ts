@@ -2,6 +2,7 @@ import { balanceCheck } from "./balance";
 import { designCheck } from "./design";
 import type { AuditCheck, AuditQuestion } from "./check";
 import { failureCheck } from "./failures";
+import { isolationCheck } from "./isolation";
 import { versionCheck } from "./versions";
 
 export {
@@ -13,7 +14,6 @@ export {
 } from "./check";
 
 const runnerOnlyChecks = [
-  { id: "isolation", title: "No run could read the settings of the user" },
   { id: "judge-order", title: "Each judge saw each pair in both orders" },
 ] as const;
 
@@ -23,6 +23,7 @@ export function auditRecords(question: AuditQuestion): readonly AuditCheck[] {
     failureCheck(question),
     versionCheck(question),
     designCheck(question),
+    isolationCheck(question),
     ...runnerOnlyChecks.map((check) => ({
       ...check,
       status: "not-checked" as const,

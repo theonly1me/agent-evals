@@ -22,8 +22,12 @@ test("init, freeze, and run give a verdict for the example with no model", async
     "All 16 tasks are complete.\n\nwith-hint is better than without-hint on passed.\nDifference: +0.5 (95% interval 0.281 to 0.719, p = 0.002) over 16 tasks.",
   );
   expect(outcome.stdout).toContain("Each of the 64 runs carries the frozen design");
-  expect(progress).toHaveLength(64);
-  expect(progress[0]).toMatch(/^\[1 of 64\] \w+ with(out)?-hint repeat 0: completed passed=[01]$/);
+  expect(outcome.stdout).toContain(
+    "Each of the 64 runs had a new home folder and a clean environment.",
+  );
+  expect(progress).toHaveLength(65);
+  expect(progress[0]).toBe("The isolation probe passed for the host sandbox.");
+  expect(progress[1]).toMatch(/^\[1 of 64\] \w+ with(out)?-hint repeat 0: completed passed=[01]$/);
 }, 60_000);
 
 test("run refuses an experiment that is not frozen, and one that changed after the freeze", async () => {

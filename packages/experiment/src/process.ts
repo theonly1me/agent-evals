@@ -4,6 +4,7 @@ export type ProcessRequest = {
   readonly workingDirectory: string;
   readonly environment: Readonly<Record<string, string>>;
   readonly timeoutSeconds: number;
+  readonly onTimeout?: () => Promise<void>;
 };
 
 export type ProcessResult =
@@ -38,6 +39,10 @@ export async function runProcess(request: ProcessRequest): Promise<ProcessResult
     ]);
 
     clearTimeout(timer);
+
+    if (timedOut) {
+      await request.onTimeout?.();
+    }
 
     return timedOut
       ? { status: "timeout", stdout, stderr }
