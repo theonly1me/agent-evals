@@ -7,6 +7,9 @@
     "test": "bun test"
   },
   "dependencies": {
-    "@agent-evals/experiment": "workspace:*"
+    "@agent-evals/experiment": "workspace:*",
+    "@agent-evals/records": "workspace:*",
+    "@agent-evals/verdict": "workspace:*",
+    "zod": "^4.6.7"
   }
 }

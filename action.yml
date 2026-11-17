@@ -1,0 +1,109 @@
+name: agent-evals verdict
+description: Compare two sets of agent results and post the verdict on the pull request.
+author: theonly1me
+branding:
+  icon: check-circle
+  color: blue
+
+inputs:
+  results:
+    description: The baseline results, or one file that holds both arms.
+    required: true
+  candidate-results:
+    description: The candidate results, when the two arms are in two locations.
+    required: false
+    default: ""
+  baseline:
+    description: The baseline arm, when one file holds both arms.
+    required: false
+    default: ""
+  candidate:
+    description: The candidate arm, when one file holds more than two arms.
+    required: false
+    default: ""
+  metric:
+    description: The score to compare. Required when the results have more than one.
+    required: false
+    default: ""
+  lower-is-better:
+    description: Set to true when a lower score is better.
+    required: false
+    default: "false"
+  target-effect:
+    description: The smallest difference that matters, for the power answer.
+    required: false
+    default: ""
+  comment:
+    description: Set to false to skip the pull request comment.
+    required: false
+    default: "true"
+  version:
+    description: The version of the agent-evals package on npm.
+    required: false
+    default: "0.1.1"
+  github-token:
+    description: The token that posts the comment. It needs the pull-requests write permission.
+    required: false
+    default: ${{ github.token }}
+
+outputs:
+  verdict:
+    description: better, worse, or not-conclusive.
+    value: ${{ steps.compare.outputs.verdict }}
+  report:
+    description: The path of the Markdown report.
+    value: ${{ steps.compare.outputs.report }}
+
+runs:
+  using: composite
+  steps:
+    - name: Compare the results
+      id: compare
+      shell: bash
+      env:
+        INPUT_RESULTS: ${{ inputs.results }}
+        INPUT_CANDIDATE_RESULTS: ${{ inputs.candidate-results }}
+        INPUT_BASELINE: ${{ inputs.baseline }}
+        INPUT_CANDIDATE: ${{ inputs.candidate }}
+        INPUT_METRIC: ${{ inputs.metric }}
+        INPUT_LOWER_IS_BETTER: ${{ inputs.lower-is-better }}
+        INPUT_TARGET_EFFECT: ${{ inputs.target-effect }}
+        INPUT_VERSION: ${{ inputs.version }}
+      run: |
+        set -euo pipefail
+        arguments=("$INPUT_RESULTS")
+        if [ -n "$INPUT_CANDIDATE_RESULTS" ]; then arguments+=("$INPUT_CANDIDATE_RESULTS"); fi
+        if [ -n "$INPUT_BASELINE" ]; then arguments+=(--baseline "$INPUT_BASELINE"); fi
+        if [ -n "$INPUT_CANDIDATE" ]; then arguments+=(--candidate "$INPUT_CANDIDATE"); fi
+        if [ -n "$INPUT_METRIC" ]; then arguments+=(--metric "$INPUT_METRIC"); fi
+        if [ "$INPUT_LOWER_IS_BETTER" = "true" ]; then arguments+=(--lower-is-better); fi
+        if [ -n "$INPUT_TARGET_EFFECT" ]; then arguments+=(--target-effect "$INPUT_TARGET_EFFECT"); fi
+        report="$RUNNER_TEMP/agent-evals-report.md"
+        data="$RUNNER_TEMP/agent-evals-report.json"
+        package="@theonly1me/agent-evals@$INPUT_VERSION"
+        npx --yes "$package" compare "${arguments[@]}" --format markdown --output "$report"
+        npx --yes "$package" compare "${arguments[@]}" --format json --output "$data"
+        verdict="$(node -e 'const fs = require("node:fs"); process.stdout.write(JSON.parse(fs.readFileSync(process.argv[1], "utf8")).primary.verdict)' "$data")"
+        echo "verdict=$verdict" >> "$GITHUB_OUTPUT"
+        echo "report=$report" >> "$GITHUB_OUTPUT"
+        cat "$report" >> "$GITHUB_STEP_SUMMARY"
+
+    - name: Post the verdict on the pull request
+      if: inputs.comment == 'true' && github.event.pull_request.number != ''
+      shell: bash
+      env:
+        GH_TOKEN: ${{ inputs.github-token }}
+        REPORT: ${{ steps.compare.outputs.report }}
+        REPOSITORY: ${{ github.repository }}
+        PULL_REQUEST: ${{ github.event.pull_request.number }}
+      run: |
+        set -euo pipefail
+        marker="<!-- agent-evals-verdict -->"
+        body="$RUNNER_TEMP/agent-evals-comment.md"
+        { echo "$marker"; cat "$REPORT"; } > "$body"
+        existing="$(gh api "repos/$REPOSITORY/issues/$PULL_REQUEST/comments" --paginate --jq "[.[] | select(.body | startswith(\"$marker\")) | .id] | first // empty")"
+        if [ -n "$existing" ]; then
+          gh api --method PATCH "repos/$REPOSITORY/issues/comments/$existing" --field "body=@$body" > /dev/null
+        else
+          gh api --method POST "repos/$REPOSITORY/issues/$PULL_REQUEST/comments" --field "body=@$body" > /dev/null
+        fi

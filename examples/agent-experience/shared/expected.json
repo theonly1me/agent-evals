@@ -1,0 +1,19 @@
+{
+  "total-amount": [],
+  "amount-by-region": ["--by", "region"],
+  "mean-units-by-product": ["--of", "units", "--op", "mean", "--by", "product"],
+  "max-amount-south": ["--op", "max", "--where", "region=south"],
+  "count-by-region": ["--op", "count", "--by", "region", "--round", "0"],
+  "widget-units-by-region": [
+    "--of",
+    "units",
+    "--by",
+    "region",
+    "--where",
+    "product=widget",
+    "--round",
+    "0"
+  ],
+  "mean-amount-three-places": ["--op", "mean", "--round", "3"],
+  "max-units-by-product": ["--of", "units", "--op", "max", "--by", "product", "--round", "0"]
+}
