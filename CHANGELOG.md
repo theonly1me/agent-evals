@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.3.0](https://github.com/theonly1me/agent-evals/compare/v0.2.0...v0.3.0) (2026-11-17)
+
+
+### Features
+
+* add the github action, the agent skill, and the code review and agent experience examples ([#22](https://github.com/theonly1me/agent-evals/issues/22)) ([a35d762](https://github.com/theonly1me/agent-evals/commit/a35d7622ce6a7df5fb2005c1c6e0a8e0057b4a13))
+
 ## [0.2.0](https://github.com/theonly1me/agent-evals/compare/v0.1.1...v0.2.0) (2026-11-17)
 
 
