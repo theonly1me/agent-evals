@@ -4,7 +4,7 @@ The experiment harness for coding agents. It answers one question: did this chan
 
 You change a skill, an instruction file, a prompt, a model, or a tool. agent-evals compares the runs before and after the change. It gives one verdict: better, worse, or not conclusive. If the verdict is not conclusive, it tells you how many more tasks you need.
 
-**Status:** the `compare` command gives a verdict on saved results. The runner starts a command, Claude Code, or Codex, on the host or in Docker.
+**Status:** the `compare` command gives a verdict on saved results. The runner starts a command, Claude Code, or Codex, on the host or in Docker. The tests of the agent subjects use stand-in programs. The examples with a real agent have no results in this repository yet.
 
 ## Compare two sets of results
 

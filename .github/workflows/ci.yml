@@ -60,7 +60,7 @@ jobs:
           results: examples/quick-start/runs.jsonl
           baseline: without-skill
           comment: "false"
-          version: 0.1.1
+          version: 0.2.0
       - name: Check the verdict
         env:
           VERDICT: ${{ steps.verdict.outputs.verdict }}
