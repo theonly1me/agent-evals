@@ -72,3 +72,24 @@ test("a version that changes inside one arm fails, and a version that differs be
   expect(statusesOf(drifting)["stable-versions"]).toBe("failed");
   expect(check).toMatchObject({ status: "passed", detail: "The arms differ in: model." });
 });
+
+test("the design check passes for one digest, and fails for a mixed or a missing digest", () => {
+  const frozen = [run({ design: "aaaa" }), run({ arm: "after", design: "aaaa" })];
+  const changed = [run({ design: "aaaa" }), run({ arm: "after", design: "bbbb" })];
+  const partial = [run({ design: "aaaa" }), run({ arm: "after" })];
+  const designOf = (records: readonly RunRecord[]) =>
+    auditRecords({ records, arms }).find((check) => check.id === "frozen-design");
+
+  expect(designOf(frozen)).toMatchObject({
+    status: "passed",
+    detail: "Each of the 2 runs carries the frozen design aaaa.",
+  });
+  expect(designOf(changed)).toMatchObject({
+    status: "failed",
+    detail: "The runs carry 2 different designs, so the design changed between runs.",
+  });
+  expect(designOf(partial)).toMatchObject({
+    status: "failed",
+    detail: "1 of 2 runs carry no design digest.",
+  });
+});

@@ -1,0 +1,17 @@
+{
+  "name": "@agent-evals/experiment",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "scripts": {
+    "typecheck": "tsc --noEmit",
+    "test": "bun test"
+  },
+  "dependencies": {
+    "@agent-evals/records": "workspace:*",
+    "@agent-evals/statistics": "workspace:*",
+    "zod": "^4.6.7"
+  }
+}

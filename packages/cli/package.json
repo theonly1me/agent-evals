@@ -40,6 +40,7 @@
     "test": "bun test"
   },
   "dependencies": {
+    "@agent-evals/experiment": "workspace:*",
     "@agent-evals/importers": "workspace:*",
     "@agent-evals/records": "workspace:*",
     "@agent-evals/report": "workspace:*",

@@ -4,7 +4,7 @@ The experiment harness for coding agents. It answers one question: did this chan
 
 You change a skill, an instruction file, a prompt, a model, or a tool. agent-evals compares the runs before and after the change. It gives one verdict: better, worse, or not conclusive. If the verdict is not conclusive, it tells you how many more tasks you need.
 
-**Status:** release 0.1. The `compare` command works on saved results. The runner comes next.
+**Status:** the `compare` command gives a verdict on saved results. The runner works with a command as the subject. Sandboxes for Claude Code and Codex come next.
 
 ## Compare two sets of results
 
@@ -32,6 +32,23 @@ Difference: +0.208 (95% interval 0.056 to 0.361, p = 0.029) over 24 tasks. witho
 ```
 
 The report also has a validity audit. It shows which checks passed, which failed, and which nobody made. The [quick start example](examples/quick-start/README.md) describes the records in this run. If one file holds both arms, name the baseline arm with `--baseline`. With two result sets, the first location is the baseline.
+
+## Run an experiment
+
+An experiment is a folder with an `experiment.yaml` file. It names the arms, the tasks, the subject, and the grader. This example needs no model and no login:
+
+```bash
+npx @theonly1me/agent-evals init my-experiment
+npx @theonly1me/agent-evals freeze my-experiment
+npx @theonly1me/agent-evals run my-experiment
+```
+
+- **`freeze` records the design.** If the metric, a task, or an input file changes later, `run` stops and names the change.
+- **The order is random.** A seed mixes the tasks and the order of the arms, so no arm always runs first.
+- **The grader is blind.** It gets the task and the workspace, and never the arm.
+- **Each run is separate.** The subject gets a new workspace, a new home folder, and only the environment variables that you name.
+
+[Design record 005](docs/design/005-the-experiment-core.md) describes the experiment file and the process protocol.
 
 ## How the verdict works
 

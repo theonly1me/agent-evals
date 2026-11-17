@@ -28,6 +28,7 @@
         "agent-evals": "bin/agent-evals.mjs",
       },
       "dependencies": {
+        "@agent-evals/experiment": "workspace:*",
         "@agent-evals/importers": "workspace:*",
         "@agent-evals/records": "workspace:*",
         "@agent-evals/report": "workspace:*",
@@ -35,6 +36,14 @@
         "bun": "^1.4.2",
       },
       "devDependencies": {
+        "zod": "^4.6.7",
+      },
+    },
+    "packages/experiment": {
+      "name": "@agent-evals/experiment",
+      "dependencies": {
+        "@agent-evals/records": "workspace:*",
+        "@agent-evals/statistics": "workspace:*",
         "zod": "^4.6.7",
       },
     },
@@ -84,6 +93,8 @@
     "@agent-evals/cli": ["@agent-evals/cli@workspace:packages/cli"],
 
     "@agent-evals/examples": ["@agent-evals/examples@workspace:examples"],
+
+    "@agent-evals/experiment": ["@agent-evals/experiment@workspace:packages/experiment"],
 
     "@agent-evals/importers": ["@agent-evals/importers@workspace:packages/importers"],
 

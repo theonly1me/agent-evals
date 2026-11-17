@@ -15,7 +15,7 @@ The run record: the one shape that every runner and every importer writes, and t
 
 ## Owns
 
-- `src/index.ts`: `runRecordSchema`, `RunRecord`, `runStatuses`, and `isScored`.
+- `src/index.ts`: `runRecordSchema`, `RunRecord`, `runStatuses`, and `isScored`. The optional `design` field holds the digest of a frozen design.
 
 ## Rules
 
