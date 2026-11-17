@@ -145,7 +145,7 @@ export function askJudgeFor(experiment: Experiment): AskJudge {
         protocol: protocolVersion,
         kind: "subject",
         task: { id: request.task.id, prompt: judgePrompt(request) },
-        arm: { name: "judge", flags: [], model: judge.model },
+        arm: { name: "judge", flags: judge.flags, model: judge.model },
         workspace: paths.workspace,
         home: paths.home,
         timeoutSeconds: experiment.timeoutSeconds,

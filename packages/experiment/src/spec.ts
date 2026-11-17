@@ -11,6 +11,7 @@ const armSchema = z.strictObject({
   flags: z.array(z.string()).default([]),
   model: z.string().min(1).optional(),
   image: z.string().min(1).optional(),
+  promptSuffix: z.string().min(1).optional(),
 });
 
 const namePattern = /^[A-Za-z0-9][A-Za-z0-9._-]*$/;
@@ -32,7 +33,11 @@ const programSchema = z.strictObject({
 export const agentNames = ["claude-code", "codex"] as const;
 export const sandboxNames = ["host", "docker"] as const;
 
-const agentSchema = z.strictObject({ agent: z.enum(agentNames) });
+const agentSchema = z.strictObject({
+  agent: z.enum(agentNames),
+  model: z.string().min(1).optional(),
+  flags: z.array(z.string()).default([]),
+});
 
 const authSchema = z.strictObject({ files: overlaySchema.default({}) });
 
@@ -45,6 +50,7 @@ const judgeSchema = z.strictObject({
   command: z.array(z.string().min(1)).min(1).optional(),
   agent: z.enum(agentNames).optional(),
   model: z.string().min(1).optional(),
+  flags: z.array(z.string()).default([]),
   votes: z.number().int().positive().default(1),
   include: z.array(z.string().min(1)).default([]),
 });
@@ -71,6 +77,7 @@ const experimentSchema = z.strictObject({
   retries: z.number().int().nonnegative().default(1),
   timeoutSeconds: z.number().positive().default(600),
   passEnv: z.array(z.string().min(1)).default([]),
+  inputs: z.array(z.string().min(1)).default([]),
 });
 
 export type Arm = z.infer<typeof armSchema>;

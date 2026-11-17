@@ -76,3 +76,20 @@ test("a new file is a change, and the results folder is not", async () => {
 
   expect(check.status === "rejected" ? check.problem : "").toContain("arms/plain/EXTRA.md");
 });
+
+test("a file in a named input folder outside the experiment is part of the freeze", async () => {
+  const directory = await writeSampleExperiment({ spec: { inputs: ["../shared"] } });
+  const sharedFile = path.join(directory, "../shared/rubric.md");
+
+  await Bun.write(sharedFile, "Version one.\n");
+  const lock = await freezeExperiment(await loaded(directory));
+
+  expect(Object.keys(lock.files)).toContain("../shared/rubric.md");
+
+  await Bun.write(sharedFile, "Version two.\n");
+  const check = await checkLock(await loaded(directory));
+
+  expect(check.status === "rejected" ? check.problem : "").toContain(
+    "These files changed: ../shared/rubric.md.",
+  );
+});

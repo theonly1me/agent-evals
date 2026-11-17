@@ -1,6 +1,8 @@
 import { expect, test } from "bun:test";
 import { readdir } from "node:fs/promises";
 import path from "node:path";
+import { createPythonRandom } from "@agent-evals/statistics";
+import { compareArms, defaultComparisonSettings } from "@agent-evals/verdict";
 import { lastJsonObject } from "./judge";
 import { freezeExperiment, type Lock } from "./lock";
 import { runExperiment } from "./runner";
@@ -147,6 +149,44 @@ test("the judge call limit stops the run, and the next run judges only the pairs
     2, 2,
   ]);
 });
+
+test("with one task and no true preference, a pairwise score gives a false verdict in at most 5% of experiments", () => {
+  const { random } = createPythonRandom(99);
+  const outcomes = [0, 0.5, 1];
+  const experimentCount = 500;
+  const pairCount = 20;
+  let falseVerdicts = 0;
+
+  for (let index = 0; index < experimentCount; index += 1) {
+    const records = Array.from({ length: pairCount }, (_, repeat) => [
+      {
+        task: "one",
+        arm: "plain",
+        repeat,
+        status: "completed" as const,
+        scores: { preferred: 0.5 },
+      },
+      {
+        task: "one",
+        arm: "hinted",
+        repeat,
+        status: "completed" as const,
+        scores: { preferred: outcomes[Math.floor(random() * outcomes.length)] ?? 0.5 },
+      },
+    ]).flat();
+    const comparison = compareArms({
+      records,
+      arms: { baseline: "plain", candidate: "hinted" },
+      metric: "preferred",
+      settings: { ...defaultComparisonSettings, resample: { seed: 3, rounds: 1000 } },
+    });
+
+    falseVerdicts +=
+      comparison !== "no-shared-task" && comparison.verdict !== "not-conclusive" ? 1 : 0;
+  }
+
+  expect(falseVerdicts / experimentCount).toBeLessThanOrEqual(0.05);
+}, 120_000);
 
 test("the answer of an agent judge is the last JSON object in its text", () => {
   expect(lastJsonObject('First {"winner": "A"} and then the final line.\n{"winner": "B"}')).toEqual(
