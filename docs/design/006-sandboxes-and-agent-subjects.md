@@ -39,6 +39,8 @@ Each run record carries its isolation level, `home` or `container`. The audit ch
 - Codex runs with `exec --json`. The output is the text of its agent messages.
 - The runner reads the version of the agent one time for each image, and each record carries it.
 
+`program` gives the path of the agent program. Use it if the name on the `PATH` is a wrapper that needs the home folder of the user.
+
 An agent needs a login in its new home folder. The experiment names it in one of two ways:
 
 - `passEnv` passes a variable, for example an API key.

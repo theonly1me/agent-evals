@@ -20,6 +20,10 @@
     "packages/cli": {
       "entry": ["scripts/*.ts", "src/**/*.test.ts", "scripts/**/*.test.ts"],
       "project": ["src/**/*.ts", "scripts/**/*.ts", "bin/*.mjs"]
+    },
+    "examples": {
+      "entry": ["**/*.test.ts", "code-review/convert.ts", "**/shared/**/*.mjs"],
+      "project": ["**/*.ts", "**/*.mjs"]
     }
   }
 }

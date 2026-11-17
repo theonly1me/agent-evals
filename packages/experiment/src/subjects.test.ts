@@ -14,6 +14,7 @@ if [ "$1" = "--version" ]; then echo "9.9.9 (Claude Code)"; exit 0; fi
 printf '%s\\n' "$@" > arguments.txt
 case "$2" in
   *broken*) printf '{"result":"Invalid API key","is_error":true}' ;;
+  *signed-out*) printf '{"result":"Not logged in","is_error":true,"total_cost_usd":0}'; exit 1 ;;
   *) printf '{"result":"I wrote the file.","is_error":false,"total_cost_usd":0.5}' ;;
 esac
 `;
@@ -42,8 +43,9 @@ async function runWithFakeAgents(spec: Record<string, unknown>): Promise<{
   await chmod(path.join(bin, "codex"), 0o755);
   await Bun.write(path.join(realHome, ".codex/auth.json"), "{}");
 
+  const resolvedSpec = JSON.parse(JSON.stringify(spec).replaceAll("<bin>", bin));
   const loaded = await loadExperiment(
-    await writeSampleExperiment({ spec: { repeats: 1, ...spec } }),
+    await writeSampleExperiment({ spec: { repeats: 1, ...resolvedSpec } }),
   );
 
   if (loaded.status === "rejected") {
@@ -126,6 +128,20 @@ test("an error result of claude-code is a failure with no score, not a score of 
   expect(attempts[0]?.detail).toBe("claude-code reported an error: Invalid API key");
 });
 
+test("when claude-code exits with an error result, the failure gives the text of the result", async () => {
+  const { summary, attempts } = await runWithFakeAgents({
+    tasks: [{ id: "a", prompt: "A signed-out request." }],
+    subject: { agent: "claude-code" },
+    retries: 0,
+  });
+
+  expect(summary.records.map((record) => record.status)).toEqual([
+    "infra-failure",
+    "infra-failure",
+  ]);
+  expect(attempts[0]?.detail).toBe("claude-code reported an error: Not logged in");
+});
+
 test("the codex subject gets the auth file in its new home, and the output is the agent message", async () => {
   const { summary, attempts, argumentsOf } = await runWithFakeAgents({
     tasks: [{ id: "a", prompt: "Solve a." }],
@@ -172,4 +188,15 @@ test("the subject gives the default model and flags, and an arm can change the m
     "high",
     "--verbose",
   ]);
+});
+
+test("an agent subject can name its program by a path, for a machine where the name on the PATH is a wrapper", async () => {
+  const { summary, attempts, argumentsOf } = await runWithFakeAgents({
+    tasks: [{ id: "a", prompt: "Solve a." }],
+    subject: { agent: "codex", program: "<bin>/claude" },
+  });
+  const [first] = attempts;
+
+  expect(first && (await argumentsOf(first)).slice(0, 2)).toEqual(["exec", "--json"]);
+  expect(summary.records[0]?.versions).toEqual({ codex: "9.9.9 (Claude Code)" });
 });

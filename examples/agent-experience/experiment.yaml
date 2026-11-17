@@ -1,0 +1,51 @@
+name: agent-experience
+metric: correct
+baseline: short-readme
+
+arms:
+  short-readme:
+    files:
+      README.md: arms/short-readme/README.md
+  full-readme:
+    files:
+      README.md: arms/full-readme/README.md
+
+tasks:
+  - id: total-amount
+    workspace: shared/workspace
+    prompt: Use tally.mjs on orders.csv to get the total amount of all orders. Write the output of the tool to answer.txt.
+  - id: amount-by-region
+    workspace: shared/workspace
+    prompt: Use tally.mjs on orders.csv to get the total amount for each region. Write the output of the tool to answer.txt.
+  - id: mean-units-by-product
+    workspace: shared/workspace
+    prompt: Use tally.mjs on orders.csv to get the mean number of units for each product. Write the output of the tool to answer.txt.
+  - id: max-amount-south
+    workspace: shared/workspace
+    prompt: Use tally.mjs on orders.csv to get the largest amount of an order in the south region. Write the output of the tool to answer.txt.
+  - id: count-by-region
+    workspace: shared/workspace
+    prompt: Use tally.mjs on orders.csv to get the number of orders for each region, with no decimal places. Write the output of the tool to answer.txt.
+  - id: widget-units-by-region
+    workspace: shared/workspace
+    prompt: Use tally.mjs on orders.csv to get the total units of the widget product for each region, with no decimal places. Write the output of the tool to answer.txt.
+  - id: mean-amount-three-places
+    workspace: shared/workspace
+    prompt: Use tally.mjs on orders.csv to get the mean amount of all orders, with three decimal places. Write the output of the tool to answer.txt.
+  - id: max-units-by-product
+    workspace: shared/workspace
+    prompt: Use tally.mjs on orders.csv to get the largest number of units in one order for each product, with no decimal places. Write the output of the tool to answer.txt.
+
+subject:
+  agent: claude-code
+  flags:
+    [--setting-sources, "", --disable-slash-commands, --strict-mcp-config, --no-session-persistence]
+
+grader:
+  command: [node, ./shared/grade.mjs]
+
+repeats: 3
+looks: [4]
+maxRuns: 48
+timeoutSeconds: 600
+passEnv: [CLAUDE_CODE_OAUTH_TOKEN]

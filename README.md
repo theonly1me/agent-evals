@@ -4,7 +4,7 @@ The experiment harness for coding agents. It answers one question: did this chan
 
 You change a skill, an instruction file, a prompt, a model, or a tool. agent-evals compares the runs before and after the change. It gives one verdict: better, worse, or not conclusive. If the verdict is not conclusive, it tells you how many more tasks you need.
 
-**Status:** the `compare` command gives a verdict on saved results. The runner starts a command, Claude Code, or Codex, on the host or in Docker.
+**Status:** the `compare` command gives a verdict on saved results. The runner starts a command, Claude Code, or Codex, on the host or in Docker. The tests of the agent subjects use stand-in programs. The examples with a real agent have no results in this repository yet.
 
 ## Compare two sets of results
 
@@ -52,6 +52,48 @@ npx @theonly1me/agent-evals run my-experiment
 - **The subject is a command or an agent.** `subject: { agent: claude-code }` and `subject: { agent: codex }` start the agent on the host or in Docker.
 
 [Design record 005](docs/design/005-the-experiment-core.md) describes the experiment file and the process protocol. [Design record 006](docs/design/006-sandboxes-and-agent-subjects.md) describes the sandboxes and the agent subjects. [Design record 007](docs/design/007-judges-and-the-stop-rule.md) describes the judges and the stop rule.
+
+## In a pull request
+
+The GitHub Action posts the verdict as one comment on the pull request, and it updates that comment on each run.
+
+```yaml
+- uses: theonly1me/agent-evals@v0.3.0
+  with:
+    results: results/main.jsonl
+    candidate-results: results/pull-request.jsonl
+```
+
+The workflow needs the permission `pull-requests: write`. The output `verdict` is `better`, `worse`, or `not-conclusive`.
+
+## In a coding agent
+
+[`skills/agent-evals`](skills/agent-evals/SKILL.md) is a skill for Claude Code and Codex. Copy the folder into the skills folder of your agent. The agent then compares results or writes an experiment when you ask if a change helped.
+
+## Examples
+
+| Example                                                 | What it shows                                                                                        |
+| ------------------------------------------------------- | ---------------------------------------------------------------------------------------------------- |
+| [quick-start](examples/quick-start/README.md)           | A verdict on saved results in one command.                                                           |
+| [code-review](examples/code-review/README.md)           | A verdict on the published results of a code review benchmark. One published lead is not conclusive. |
+| [agent-experience](examples/agent-experience/README.md) | Two versions of the documentation of a tool as the arms.                                             |
+| [no-comments](examples/no-comments/README.md)           | A study with an agent, hidden tests, and two blind judges.                                           |
+
+## What agent-evals checks
+
+| Question                                       | What agent-evals does                                                                                                  | Test                                       |
+| ---------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------- | ------------------------------------------ |
+| Is the difference real?                        | A permutation test and a bootstrap interval, with the task as the unit.                                                | `packages/verdict/src/simulation.test.ts`  |
+| How many tasks do I need?                      | A simulation of the same verdict rule gives the number.                                                                | `packages/verdict/src/power.test.ts`       |
+| Did the design change after the first results? | `freeze` records the design and each input file. `run` stops on a change.                                              | `packages/experiment/src/lock.test.ts`     |
+| Can I stop early?                              | Looks that the freeze records, with the 5% level split across the analyses.                                            | `packages/experiment/src/looks.test.ts`    |
+| Did the order of the runs favor an arm?        | A seed mixes the tasks and the order of the arms.                                                                      | `packages/experiment/src/schedule.test.ts` |
+| Did the grader or the judge know the arm?      | No request holds the arm. A pairwise judge sees both orders.                                                           | `packages/experiment/src/judging.test.ts`  |
+| Did a run read my settings?                    | A new home folder and a clean environment for each run, in Docker if you want. A probe checks it before the first run. | `packages/experiment/src/sandbox.test.ts`  |
+| Did a failed run count as a 0?                 | A failed run has no score, and the audit compares the failure rates.                                                   | `packages/experiment/src/runner.test.ts`   |
+| Can I use the results that I have?             | Importers for Harbor, Inspect AI, promptfoo, and JSONL.                                                                | `packages/importers/src`                   |
+
+This comes from a survey of public documentation in November 2026. Harbor, Inspect AI, and promptfoo did not describe a paired test, a power analysis, or a frozen design.
 
 ## How the verdict works
 

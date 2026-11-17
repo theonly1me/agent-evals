@@ -53,11 +53,19 @@ function exitProblem(options: { readonly agent: AgentName; readonly result: Proc
 function readClaude(result: ProcessResult): SubjectResponse {
   const problem = exitProblem({ agent: "claude-code", result });
 
-  if (problem !== null || result.status === "not-started") {
+  if (result.status === "not-started") {
     return failure(problem ?? "claude-code did not start");
   }
 
   const parsed = claudeResultSchema.safeParse(parsedJson(result.stdout));
+
+  if (problem !== null) {
+    return failure(
+      parsed.success && parsed.data.result.length > 0
+        ? `claude-code reported an error: ${lastLines(parsed.data.result)}`
+        : problem,
+    );
+  }
 
   if (result.status === "timeout") {
     return { status: "timeout", output: parsed.success ? parsed.data.result : "" };
@@ -102,15 +110,17 @@ function readCodex(result: ProcessResult): SubjectResponse {
 export function agentProgram(options: {
   readonly agent: AgentName;
   readonly request: SubjectRequest;
+  readonly program?: string;
 }): SubjectProgram {
   const { agent, request } = options;
+  const program = options.program ?? (agent === "claude-code" ? "claude" : "codex");
   const model = request.arm.model === undefined ? [] : ["--model", request.arm.model];
 
   if (agent === "claude-code") {
     return {
       label: agent,
       command: [
-        "claude",
+        program,
         "--print",
         request.task.prompt,
         "--output-format",
@@ -120,7 +130,7 @@ export function agentProgram(options: {
         ...request.arm.flags,
       ],
       input: "",
-      versionCommand: ["claude", "--version"],
+      versionCommand: [program, "--version"],
       read: readClaude,
     };
   }
@@ -128,7 +138,7 @@ export function agentProgram(options: {
   return {
     label: agent,
     command: [
-      "codex",
+      program,
       "exec",
       "--json",
       "--skip-git-repo-check",
@@ -138,7 +148,7 @@ export function agentProgram(options: {
       request.task.prompt,
     ],
     input: "",
-    versionCommand: ["codex", "--version"],
+    versionCommand: [program, "--version"],
     read: readCodex,
   };
 }
@@ -151,7 +161,11 @@ export function subjectProgram(options: {
   const { subject } = options.experiment;
 
   if ("agent" in subject) {
-    return agentProgram({ agent: subject.agent, request: options.request });
+    return agentProgram({
+      agent: subject.agent,
+      request: options.request,
+      program: subject.program,
+    });
   }
 
   const command = subject.command.map((argument) =>

@@ -17,6 +17,9 @@
       "name": "@agent-evals/examples",
       "dependencies": {
         "@agent-evals/experiment": "workspace:*",
+        "@agent-evals/records": "workspace:*",
+        "@agent-evals/verdict": "workspace:*",
+        "zod": "^4.6.7",
       },
     },
     "packages/audit": {
