@@ -55,7 +55,7 @@ async function fileDigests(experiment: Experiment): Promise<Record<string, strin
 }
 
 function designOf(experiment: Experiment): Design {
-  const { directory, specFile, maxRuns, maxCostUsd, ...design } = experiment;
+  const { directory, specFile, maxRuns, maxCostUsd, maxJudgeCalls, ...design } = experiment;
 
   return { ...design, alpha: significanceLevel };
 }

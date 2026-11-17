@@ -1,3 +1,4 @@
+import { defaultComparisonSettings } from "@agent-evals/verdict";
 import type { Report } from "./build";
 import { formatNumber, formatSigned, pValuePhrase } from "./numbers";
 
@@ -63,6 +64,12 @@ export function noteSentences(report: Report): string[] {
 
   if (!settings.higherIsBetter) {
     notes.push(`A lower ${primary.metric} is better.`);
+  }
+
+  if (settings.alpha !== defaultComparisonSettings.alpha) {
+    notes.push(
+      `A verdict needs a p-value below ${formatNumber(settings.alpha)}, not ${defaultComparisonSettings.alpha}, because the design has more than one analysis.`,
+    );
   }
 
   const unmatched = primary.tasksOnlyInBaseline.length + primary.tasksOnlyInCandidate.length;

@@ -14,6 +14,7 @@ export const runRecordSchema = z.object({
   versions: z.record(z.string(), z.string()).optional(),
   design: z.string().optional(),
   isolation: z.enum(["home", "container"]).optional(),
+  judgeOrders: z.number().int().positive().optional(),
 });
 
 export type RunRecord = z.infer<typeof runRecordSchema>;

@@ -3,7 +3,10 @@ import os from "node:os";
 import path from "node:path";
 import type { RunRecord } from "@agent-evals/records";
 import { canaryVariable } from "./canary";
+import { type AskJudge, askJudgeFor } from "./judge";
+import { judgeBlock } from "./judging";
 import type { Lock } from "./lock";
+import type { LookDecision } from "./looks";
 import { runProcess } from "./process";
 import {
   type GraderRequest,
@@ -17,8 +20,10 @@ import { type Arm, type Experiment, promptOf, type Task } from "./spec";
 import {
   appendAttempt,
   type Attempt,
+  type Judgment,
   lastAttempts,
   readAttempts,
+  readJudgments,
   recordsOf,
   type Store,
   storeOf,
@@ -27,9 +32,7 @@ import {
 } from "./store";
 import { subjectProgram } from "./subjects";
 
-export type StopReason = "complete" | "run-limit" | "cost-limit" | "look";
-
-export type LookDecision = "continue" | "stop";
+export type StopReason = "complete" | "run-limit" | "cost-limit" | "judge-limit" | "look";
 
 export type RunSummary = {
   readonly reason: StopReason;
@@ -44,6 +47,7 @@ export type RunOptions = {
   readonly sandbox: Sandbox;
   readonly canaryToken?: string;
   readonly realHome?: string;
+  readonly askJudge?: AskJudge;
   readonly onAttempt?: (attempt: Attempt) => void;
   readonly atLook?: (look: {
     readonly tasksDone: number;
@@ -67,6 +71,7 @@ type VersionReader = (options: {
 }) => Promise<Readonly<Record<string, string>> | undefined>;
 
 const versionSeconds = 60;
+const storedOutputLimit = 20_000;
 
 function sourceOf(options: { readonly source: string; readonly realHome: string }): string {
   return options.source.startsWith("~/")
@@ -244,6 +249,12 @@ async function runCell(context: CellContext): Promise<Attempt> {
     };
   }
 
+  const finished = { ...measured, output: subject.output.slice(0, storedOutputLimit) };
+
+  if (experiment.grader === undefined) {
+    return { ...finished, status: subject.status, scores: {} };
+  }
+
   const graderRequest: GraderRequest = {
     protocol: protocolVersion,
     kind: "grader",
@@ -262,7 +273,7 @@ async function runCell(context: CellContext): Promise<Attempt> {
   );
 
   return grade.status === "graded"
-    ? { ...measured, status: subject.status, scores: { ...grade.scores } }
+    ? { ...finished, status: subject.status, scores: { ...grade.scores } }
     : { ...measured, status: "infra-failure", scores: {}, detail: grade.detail };
 }
 
@@ -330,12 +341,21 @@ async function runBlock(options: {
 export async function runExperiment(run: RunOptions): Promise<RunSummary> {
   const store = storeOf(run.experiment);
   const attempts = [...(await readAttempts(store))];
+  const judgments: Judgment[] = [...(await readJudgments(store))];
+  const judging = {
+    experiment: run.experiment,
+    store,
+    ask: run.askJudge ?? askJudgeFor(run.experiment),
+    attempts,
+    judgments,
+    calls: { count: judgments.reduce((total, judgment) => total + judgment.calls, 0) },
+  };
   const startCount = attempts.length;
   const versions = versionReader(run.sandbox);
   const summaryOf = (options: { reason: StopReason; tasksDone: number }): RunSummary => ({
     ...options,
     newAttempts: attempts.length - startCount,
-    records: recordsOf(attempts),
+    records: recordsOf({ attempts, judgments }),
   });
   const blocks = buildSchedule(run.experiment);
 
@@ -347,9 +367,16 @@ export async function runExperiment(run: RunOptions): Promise<RunSummary> {
       return summaryOf({ reason: limit, tasksDone: index });
     }
 
+    if ((await judgeBlock({ context: judging, block })) === "limit") {
+      return summaryOf({ reason: "judge-limit", tasksDone: index });
+    }
+
     const isLook = run.experiment.looks.includes(tasksDone) && tasksDone < blocks.length;
 
-    if (isLook && run.atLook?.({ tasksDone, records: recordsOf(attempts) }) === "stop") {
+    if (
+      isLook &&
+      run.atLook?.({ tasksDone, records: recordsOf({ attempts, judgments }) }) === "stop"
+    ) {
       return summaryOf({ reason: "look", tasksDone });
     }
   }

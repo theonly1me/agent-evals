@@ -2,8 +2,12 @@ import { readdir } from "node:fs/promises";
 import path from "node:path";
 import { parseArgs } from "node:util";
 import {
+  analysisAlpha,
+  analysisCount,
   type Attempt,
   canaryVariable,
+  candidatesOf,
+  comparisonSettingsOf,
   checkLock,
   dockerProblem,
   dockerSandbox,
@@ -12,13 +16,13 @@ import {
   hostSandbox,
   loadExperiment,
   lockFileName,
+  lookDecision,
   probeIsolation,
   type RunSummary,
   runExperiment,
   storeOf,
 } from "@agent-evals/experiment";
 import { buildReport, renderReport, type ReportFormat, reportFormats } from "@agent-evals/report";
-import { defaultComparisonSettings } from "@agent-evals/verdict";
 import { type CommandOutcome, failed, succeeded } from "../outcome";
 import { templateFiles } from "./template";
 
@@ -120,10 +124,16 @@ function stopNote(options: {
     complete: `All ${taskCount} tasks are complete.`,
     "run-limit": `Stopped at the limit of ${experiment.maxRuns} runs, after ${summary.tasksDone} of ${taskCount} tasks. Raise maxRuns and run again to continue.`,
     "cost-limit": `Stopped at the cost limit of ${experiment.maxCostUsd} USD, after ${summary.tasksDone} of ${taskCount} tasks. Raise maxCostUsd and run again to continue.`,
-    look: `Stopped at the look after ${summary.tasksDone} of ${taskCount} tasks.`,
+    "judge-limit": `Stopped at the limit of ${experiment.maxJudgeCalls} judge calls, after ${summary.tasksDone} of ${taskCount} tasks. Raise maxJudgeCalls and run again to continue.`,
+    look: `Stopped at the look after ${summary.tasksDone} of ${taskCount} tasks, because the verdict is conclusive.`,
   };
+  const analyses = analysisCount(experiment);
+  const levelNote =
+    analyses > 1
+      ? ` The design has ${analyses} analyses, so each one uses a significance level of ${analysisAlpha(experiment).toFixed(4)}.`
+      : "";
 
-  return notes[summary.reason];
+  return `${notes[summary.reason]}${levelNote}`;
 }
 
 function parseRunArguments(argumentList: readonly string[]) {
@@ -149,14 +159,12 @@ function reportsOf(options: {
   readonly format: ReportFormat;
 }): readonly string[] {
   const { experiment, summary } = options;
-  const candidates = Object.keys(experiment.arms).filter((arm) => arm !== experiment.baseline);
-
-  return candidates.map((candidate) => {
+  return candidatesOf(experiment).map((candidate) => {
     const report = buildReport({
       records: summary.records,
       arms: { baseline: experiment.baseline, candidate },
       metric: experiment.metric,
-      settings: { ...defaultComparisonSettings, higherIsBetter: !experiment.lowerIsBetter },
+      settings: comparisonSettingsOf(experiment),
     });
 
     return report === "no-shared-task"
@@ -226,6 +234,15 @@ export async function runRun(options: {
         lock: lockCheck.lock,
         sandbox,
         canaryToken: probe.token,
+        atLook: (look) => {
+          const decision = lookDecision({ experiment, records: look.records });
+
+          options.onProgress(
+            `Look after ${look.tasksDone} tasks: ${decision === "stop" ? "the verdict is conclusive" : "not conclusive yet"}.`,
+          );
+
+          return decision;
+        },
         onAttempt: (attempt) => {
           count += attempt.attempt === 0 ? 1 : 0;
           options.onProgress(progressLine({ attempt, count, total }));
