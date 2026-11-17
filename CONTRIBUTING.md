@@ -28,7 +28,7 @@ Keep changes focused and add tests for behavior that can regress. Before you sub
 ## Code conventions
 
 - Use complete names, and an options object for functions with two or more arguments.
-- Keep TypeScript files at 200 lines or fewer, including tests.
+- Keep TypeScript files at 500 lines or fewer, including tests.
 - Avoid `any`, non-null assertions, type assertions other than `as const`, and unhandled or voided promises.
 - Write code without comments. Express intent in names, types, functions, and tests.
 - Fix lint findings. Do not suppress rules.
