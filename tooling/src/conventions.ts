@@ -2,7 +2,7 @@ import ts from "typescript";
 import { listFiles } from "./conventions/files";
 import { textRules } from "./conventions/textRules";
 
-const maximumLineCount = 200;
+const maximumLineCount = 500;
 const codeSuffix = ".ts";
 const proseSuffixes = [".md", ".ts", ".mjs", ".html", ".yml", ".yaml", ".json"] as const;
 

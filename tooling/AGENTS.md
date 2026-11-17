@@ -15,7 +15,9 @@ The repository checks that `bun run lint` runs. It is a private workspace and sh
 
 ## Owns
 
-- `src/conventions.ts`: the 200 line limit, no comments, no dashes, and no machine paths.
+- `src/conventions.ts`: the 500 line limit, no comments, no dashes, and no machine paths.
+- `src/privacy.ts`: no real email address, no private term, and no gendered pronoun in Markdown.
+- `src/releaseVersions.ts`: each version that Release Please writes agrees with the root `package.json`.
 - `src/boundaries.ts`: the package graph in `src/boundaries/packages.ts` and the check of each import against it.
 - `src/prose.ts`: plain English errors and broken relative links in Markdown.
 - `src/packageGuides.ts`: the facts block of each `AGENTS.md`.
