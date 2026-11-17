@@ -3,6 +3,9 @@ version = 1
 [code."packages/cli"]
 powers = ["exec"]
 
+[code."packages/experiment"]
+powers = ["exec"]
+
 [code.tooling]
 powers = ["exec"]
 
