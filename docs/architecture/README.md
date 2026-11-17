@@ -1,29 +1,31 @@
 # Architecture
 
-agent-evals turns run records into one verdict on a change. A run record is the result of one run of one arm on one task.
+agent-evals turns run records into one verdict on a change. A run record is the result of one run of one arm on one task. The records come from the runner or from the result files of another harness.
 
 ```mermaid
 flowchart LR
   Files["result files: Harbor, Inspect AI, promptfoo, JSONL"] --> Importers["importers"]
   Importers --> Records["run records"]
+  Experiment["experiment: freeze, schedule, run, grade"] --> Records
   Records --> Verdict["verdict: match tasks, interval, test, power"]
   Records --> Audit["audit: balance, failures, versions"]
   Verdict --> Report["report: text, Markdown, HTML, JSON"]
   Audit --> Report
-  Report --> Cli["cli: agent-evals compare"]
+  Report --> Cli["cli: init, freeze, run, compare"]
 ```
 
 ## Packages
 
-| Package                   | Purpose                                                      | May depend on                               |
-| ------------------------- | ------------------------------------------------------------ | ------------------------------------------- |
-| `@agent-evals/statistics` | Numeric methods on plain numbers.                            | nothing                                     |
-| `@agent-evals/records`    | The run record schema.                                       | nothing                                     |
-| `@agent-evals/importers`  | Reads the result files of other harnesses.                   | `records`                                   |
-| `@agent-evals/audit`      | Checks if the records support a fair comparison.             | `records`                                   |
-| `@agent-evals/verdict`    | The comparison of two arms, the verdict, and the power plan. | `statistics`, `records`                     |
-| `@agent-evals/report`     | Builds and renders the report.                               | `statistics`, `records`, `audit`, `verdict` |
-| `@agent-evals/cli`        | The `agent-evals` command.                                   | `records`, `importers`, `verdict`, `report` |
+| Package                   | Purpose                                                      | May depend on                                             |
+| ------------------------- | ------------------------------------------------------------ | --------------------------------------------------------- |
+| `@agent-evals/statistics` | Numeric methods on plain numbers.                            | nothing                                                   |
+| `@agent-evals/records`    | The run record schema.                                       | nothing                                                   |
+| `@agent-evals/importers`  | Reads the result files of other harnesses.                   | `records`                                                 |
+| `@agent-evals/audit`      | Checks if the records support a fair comparison.             | `records`                                                 |
+| `@agent-evals/verdict`    | The comparison of two arms, the verdict, and the power plan. | `statistics`, `records`                                   |
+| `@agent-evals/report`     | Builds and renders the report.                               | `statistics`, `records`, `audit`, `verdict`               |
+| `@agent-evals/experiment` | Runs a frozen experiment and writes run records.             | `statistics`, `records`                                   |
+| `@agent-evals/cli`        | The `agent-evals` command.                                   | `records`, `importers`, `verdict`, `report`, `experiment` |
 
 `tooling/src/boundaries/packages.ts` holds this graph, and `bun run lint` checks every import against it.
 

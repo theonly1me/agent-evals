@@ -5,6 +5,7 @@ export const packageNames = [
   "audit",
   "verdict",
   "report",
+  "experiment",
   "cli",
 ] as const;
 
@@ -22,6 +23,7 @@ export const packageLayout: PackageLayout = {
     audit: ["records"],
     verdict: ["statistics", "records"],
     report: ["statistics", "records", "audit", "verdict"],
-    cli: ["records", "importers", "verdict", "report"],
+    experiment: ["statistics", "records"],
+    cli: ["records", "importers", "verdict", "report", "experiment"],
   },
 };
