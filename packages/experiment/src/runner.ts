@@ -188,7 +188,10 @@ async function runCell(context: CellContext): Promise<Attempt> {
     };
   }
 
-  const prompt = await promptOf({ experiment, task });
+  const taskPrompt = await promptOf({ experiment, task });
+  const prompt = arm.promptSuffix === undefined ? taskPrompt : `${taskPrompt}\n${arm.promptSuffix}`;
+  const subjectDefaults =
+    "agent" in experiment.subject ? experiment.subject : { model: undefined, flags: [] };
   const paths = await prepareDirectories({ context, task, arm });
   const located = sandbox.locate(paths);
   const image = arm.image ?? experiment.image;
@@ -196,7 +199,11 @@ async function runCell(context: CellContext): Promise<Attempt> {
     protocol: protocolVersion,
     kind: "subject",
     task: { id: task.id, prompt },
-    arm: { name: cell.arm, flags: arm.flags, model: arm.model },
+    arm: {
+      name: cell.arm,
+      flags: [...subjectDefaults.flags, ...arm.flags],
+      model: arm.model ?? subjectDefaults.model,
+    },
     workspace: located.workspace,
     home: located.home,
     timeoutSeconds: experiment.timeoutSeconds,
@@ -258,7 +265,7 @@ async function runCell(context: CellContext): Promise<Attempt> {
   const graderRequest: GraderRequest = {
     protocol: protocolVersion,
     kind: "grader",
-    task: { id: task.id, prompt },
+    task: { id: task.id, prompt: taskPrompt },
     workspace: paths.workspace,
     output: subject.output,
   };

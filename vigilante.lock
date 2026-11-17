@@ -1,5 +1,8 @@
 version = 1
 
+[code.examples]
+powers = ["exec"]
+
 [code."packages/cli"]
 powers = ["exec"]
 

@@ -199,3 +199,32 @@ test("a subject that prints the canary of the runner is a failure", async () => 
   ]);
   expect(first?.detail).toBe("the subject read AGENT_EVALS_CANARY of the runner");
 });
+
+test("the prompt suffix of an arm reaches the subject and not the grader", async () => {
+  const { experiment, lock } = await frozenSample({
+    tasks: ["a"],
+    spec: {
+      repeats: 1,
+      arms: { plain: {}, hinted: { promptSuffix: "Write no comments." } },
+      subject: {
+        command: [
+          process.execPath,
+          "-e",
+          "const r = JSON.parse(await Bun.stdin.text()); console.log(JSON.stringify({ output: r.task.prompt }));",
+        ],
+      },
+    },
+  });
+  const graderRequests = path.join(experiment.directory, "grader-requests");
+
+  await runExperiment({ experiment, lock, sandbox: hostSandbox });
+  const requests = await Promise.all(
+    (await readdir(graderRequests)).map((file) => Bun.file(path.join(graderRequests, file)).json()),
+  );
+
+  expect(requests.map((request) => request.output).sort()).toEqual([
+    "Solve a.",
+    "Solve a.\nWrite no comments.",
+  ]);
+  expect(requests.map((request) => request.task.prompt)).toEqual(["Solve a.", "Solve a."]);
+});

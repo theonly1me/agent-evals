@@ -6,7 +6,13 @@ export const lockFileName = "agent-evals.lock.json";
 export const storeDirectoryName = ".agent-evals";
 export const significanceLevel = 0.05;
 
-const skippedSegments = [storeDirectoryName, "node_modules", ".git"];
+const skippedSegments = [
+  storeDirectoryName,
+  "node_modules",
+  ".git",
+  "__pycache__",
+  ".pytest_cache",
+];
 
 const designSchema = z.record(z.string(), z.unknown());
 
@@ -42,6 +48,16 @@ async function fileDigests(experiment: Experiment): Promise<Record<string, strin
 
     if (!skipped && file !== lockFileName && file !== specName) {
       files.push(file);
+    }
+  }
+
+  for (const input of experiment.inputs) {
+    const root = path.join(directory, input);
+
+    for await (const file of new Bun.Glob("**/*").scan({ cwd: root, onlyFiles: true, dot: true })) {
+      if (!file.split("/").some((segment) => skippedSegments.includes(segment))) {
+        files.push(path.join(input, file));
+      }
     }
   }
 

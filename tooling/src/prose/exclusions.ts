@@ -7,6 +7,7 @@ export const proseExclusions = {
     "**/dist/**",
     "**/out/**",
     "**/fixtures/**",
+    "examples/*/shared/**",
     "CHANGELOG.md",
     "LICENSE-*",
   ],

@@ -1,0 +1,91 @@
+name: no-comments-claude-sonnet
+metric: readability-claude-judge
+baseline: comments-allowed
+
+arms:
+  comments-allowed: {}
+  comments-banned:
+    promptSuffix: "Do not write any comments in code. This includes # comments and docstrings."
+
+tasks:
+  - id: ledger-usage-billing
+    promptFile: ../shared/prompt.md
+    workspace: ../shared/seed_repo
+
+subject:
+  agent: claude-code
+  model: claude-sonnet-5-5
+  flags:
+    [
+      --effort,
+      high,
+      --setting-sources,
+      "",
+      --disable-slash-commands,
+      --strict-mcp-config,
+      --no-session-persistence,
+    ]
+
+grader:
+  command: [python3, ./../shared/grade.py]
+
+judges:
+  - kind: pairwise
+    metric: readability-claude-judge
+    agent: claude-code
+    model: claude-opus-5-5
+    flags:
+      [
+        --effort,
+        high,
+        --setting-sources,
+        "",
+        --disable-slash-commands,
+        --strict-mcp-config,
+        --no-session-persistence,
+      ]
+    include: ["judge-view/**/*.py"]
+    rubric: |
+      Comments were removed from both entries. Decide which entry is easier to read, to understand, and to change.
+      Ignore correctness, length by itself, and style details such as blank lines.
+      Use these claims as a guide. For each entry, decide if each claim is true.
+      1. Every function, class and variable name says what it does or holds.
+      2. No function is longer than 25 lines.
+      3. Each function works at one level of abstraction.
+      4. Business rules appear as named functions or named constants, not as inline arithmetic.
+      5. No control flow is nested deeper than two levels.
+      6. No logic is duplicated.
+      7. Each module has one clear purpose that its name states.
+      8. Data flow is explicit. State changes happen in few, obvious places.
+      9. Edge cases are handled in named steps, not scattered conditionals.
+      10. There is no dead code and no unused parameter.
+  - kind: pairwise
+    metric: readability-codex-judge
+    agent: codex
+    model: gpt-6.1-sol
+    flags: [-c, 'model_reasoning_effort="high"']
+    include: ["judge-view/**/*.py"]
+    rubric: |
+      Comments were removed from both entries. Decide which entry is easier to read, to understand, and to change.
+      Ignore correctness, length by itself, and style details such as blank lines.
+      Use these claims as a guide. For each entry, decide if each claim is true.
+      1. Every function, class and variable name says what it does or holds.
+      2. No function is longer than 25 lines.
+      3. Each function works at one level of abstraction.
+      4. Business rules appear as named functions or named constants, not as inline arithmetic.
+      5. No control flow is nested deeper than two levels.
+      6. No logic is duplicated.
+      7. Each module has one clear purpose that its name states.
+      8. Data flow is explicit. State changes happen in few, obvious places.
+      9. Edge cases are handled in named steps, not scattered conditionals.
+      10. There is no dead code and no unused parameter.
+
+repeats: 20
+maxRuns: 40
+maxJudgeCalls: 80
+timeoutSeconds: 2400
+inputs: [../shared]
+passEnv: [CLAUDE_CODE_OAUTH_TOKEN]
+auth:
+  files:
+    .codex/auth.json: ~/.codex/auth.json

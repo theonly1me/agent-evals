@@ -151,3 +151,25 @@ test("the codex subject gets the auth file in its new home, and the output is th
   expect(summary.records.map((record) => record.scores)).toEqual([{ passed: 1 }, { passed: 1 }]);
   expect(summary.records[0]?.versions).toEqual({ codex: "codex-cli 8.8.8" });
 });
+
+test("the subject gives the default model and flags, and an arm can change the model and add flags", async () => {
+  const { attempts, argumentsOf } = await runWithFakeAgents({
+    tasks: [{ id: "a", prompt: "Solve a." }],
+    subject: { agent: "claude-code", model: "default-model", flags: ["--effort", "high"] },
+    arms: { plain: {}, hinted: { model: "other-model", flags: ["--verbose"] } },
+  });
+  const tailOf = async (arm: string) => {
+    const attempt = attempts.find((candidate) => candidate.arm === arm);
+
+    return attempt === undefined ? [] : (await argumentsOf(attempt)).slice(5);
+  };
+
+  expect(await tailOf("plain")).toEqual(["--model", "default-model", "--effort", "high"]);
+  expect(await tailOf("hinted")).toEqual([
+    "--model",
+    "other-model",
+    "--effort",
+    "high",
+    "--verbose",
+  ]);
+});

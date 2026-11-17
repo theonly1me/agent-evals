@@ -36,6 +36,11 @@ jobs:
           key: turbo-${{ runner.os }}-${{ github.job }}-${{ github.sha }}
           restore-keys: turbo-${{ runner.os }}-${{ github.job }}-
       - run: bun install --frozen-lockfile
+      - name: Install pytest for the example graders
+        run: |
+          python3 -m venv "$RUNNER_TEMP/python"
+          "$RUNNER_TEMP/python/bin/pip" install --quiet pytest==9.2.0
+          echo "$RUNNER_TEMP/python/bin" >> "$GITHUB_PATH"
       - run: bun run typecheck
       - run: bun run lint
       - run: bun run knip

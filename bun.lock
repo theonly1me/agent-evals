@@ -15,6 +15,9 @@
     },
     "examples": {
       "name": "@agent-evals/examples",
+      "dependencies": {
+        "@agent-evals/experiment": "workspace:*",
+      },
     },
     "packages/audit": {
       "name": "@agent-evals/audit",
