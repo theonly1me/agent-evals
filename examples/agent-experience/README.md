@@ -5,7 +5,7 @@ This experiment asks if better documentation helps an agent use a tool. The tool
 - The arm `short-readme` gives the agent a README with one command and no options.
 - The arm `full-readme` gives the agent a README with a table of each option.
 
-The two README files are the only difference between the arms. You can use the same design for your product: put the two versions of your documentation, your command help, or your error messages in the arms.
+The two README files are the only difference between the arms. You can use the same design for your product. Put the two versions of your documentation, your command help, or your error messages in the arms.
 
 `shared/grade.mjs` is the grader. It runs the tool with the correct options and compares the result with `answer.txt`. It gives the score `correct`.
 

@@ -40,7 +40,7 @@ inputs:
   version:
     description: The version of the agent-evals package on npm.
     required: false
-    default: "0.1.1"
+    default: latest
   github-token:
     description: The token that posts the comment. It needs the pull-requests write permission.
     required: false

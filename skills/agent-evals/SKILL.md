@@ -1,6 +1,6 @@
 ---
 name: agent-evals
-description: Use when the user asks if a change made a coding agent better, or asks to compare two sets of agent results. Also use it when the user says "did this skill help?", "is this prompt better?", "compare these eval runs", or "set up an experiment for my agent". Runs a frozen experiment or reads saved results, and gives one verdict with its evidence. Not for a single run of an agent with no comparison.
+description: Use when the user asks if a change made a coding agent better, or asks to compare two sets of agent results. Also use it when the user says "did this skill help?", "is this prompt better?", or "compare these eval runs". Runs a frozen experiment or reads saved results, and gives one verdict with its evidence. Not for a single run of an agent with no comparison.
 ---
 
 # Give a verdict on a change to an agent

@@ -47,3 +47,25 @@ jobs:
       - run: bun run test
       - run: bun run stage
       - run: npm pack --dry-run ./packages/cli/out/package
+
+  action:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+      - name: Run the action on the quick start results
+        id: verdict
+        uses: ./
+        with:
+          results: examples/quick-start/runs.jsonl
+          baseline: without-skill
+          comment: "false"
+          version: 0.1.1
+      - name: Check the verdict
+        env:
+          VERDICT: ${{ steps.verdict.outputs.verdict }}
+        run: |
+          if [ "$VERDICT" != "better" ]; then
+            echo "the action gave the verdict '$VERDICT', expected 'better'" >&2
+            exit 1
+          fi
