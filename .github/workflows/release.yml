@@ -32,6 +32,7 @@ jobs:
       - name: Find an unpublished release at this commit
         id: pending
         run: |
+          name="$(node -p 'require("./packages/cli/src/product.json").name')"
           version="$(node -p 'require("./packages/cli/src/product.json").version')"
           tag="v$version"
           if ! git fetch --no-tags --depth=1 origin "refs/tags/$tag:refs/tags/$tag"; then
@@ -42,8 +43,8 @@ jobs:
             echo "$tag belongs to another commit"
             exit 0
           fi
-          if npm view "agent-evals@$version" version >/dev/null 2>&1; then
-            echo "agent-evals@$version is on npm"
+          if npm view "$name@$version" version >/dev/null 2>&1; then
+            echo "$name@$version is on npm"
             exit 0
           fi
           echo "tag=$tag" >> "$GITHUB_OUTPUT"

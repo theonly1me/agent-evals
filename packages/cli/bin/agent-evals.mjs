@@ -39,7 +39,7 @@ const runtime = bundledBunPath() ?? bunOnPath();
 
 if (runtime === null) {
   console.error(
-    "agent-evals: bun was not found. Reinstall with npm i -g agent-evals, or install bun from https://bun.sh",
+    "agent-evals: bun was not found. Reinstall with npm i -g @theonly1me/agent-evals, or install bun from https://bun.sh",
   );
   process.exit(1);
 }
