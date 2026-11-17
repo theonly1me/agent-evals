@@ -64,7 +64,7 @@ test("the staged package runs from a new folder and has no workspace dependency"
     "without-skill",
   ]);
 
-  expect(manifest).toMatchObject({ name: "agent-evals", version: product.version });
+  expect(manifest).toMatchObject({ name: "@theonly1me/agent-evals", version: product.version });
   expect(Object.keys(manifest.dependencies)).toEqual(["bun"]);
   expect(version).toEqual({ stdout: `${product.version}\n`, stderr: "", exitCode: 0 });
   expect(verdict.stdout).toStartWith("with-skill is better than without-skill on passed.");

@@ -16,14 +16,14 @@ agent-evals reads the results that you already have:
 - a JSONL file of [run records](packages/records/AGENTS.md)
 
 ```bash
-npx agent-evals compare <baseline results> <candidate results>
+npx @theonly1me/agent-evals compare <baseline results> <candidate results>
 ```
 
 The command needs only Node. To see a verdict before you use your own results, get the example records:
 
 ```bash
 curl -fsSLO https://raw.githubusercontent.com/theonly1me/agent-evals/main/examples/quick-start/runs.jsonl
-npx agent-evals compare runs.jsonl --baseline without-skill
+npx @theonly1me/agent-evals compare runs.jsonl --baseline without-skill
 ```
 
 ```text
