@@ -15,6 +15,7 @@ printf '%s\\n' "$@" > arguments.txt
 case "$2" in
   *broken*) printf '{"result":"Invalid API key","is_error":true}' ;;
   *signed-out*) printf '{"result":"Not logged in","is_error":true,"total_cost_usd":0}'; exit 1 ;;
+  *over-limit*) printf '{"result":"You have hit your session limit, resets 8pm","is_error":true,"api_error_status":429}'; exit 1 ;;
   *) printf '{"result":"I wrote the file.","is_error":false,"total_cost_usd":0.5}' ;;
 esac
 `;
@@ -140,6 +141,22 @@ test("when claude-code exits with an error result, the failure gives the text of
     "infra-failure",
   ]);
   expect(attempts[0]?.detail).toBe("claude-code reported an error: Not logged in");
+});
+
+test("a usage limit of claude-code is a limited failure, so the run stops and the cell can run again", async () => {
+  const { summary, attempts } = await runWithFakeAgents({
+    tasks: [{ id: "a", prompt: "An over-limit request." }],
+    subject: { agent: "claude-code" },
+    retries: 0,
+  });
+
+  expect(summary.reason).toBe("usage-limit");
+  expect(attempts).toHaveLength(1);
+  expect(attempts[0]).toMatchObject({
+    status: "infra-failure",
+    limited: true,
+    detail: "claude-code reported an error: You have hit your session limit, resets 8pm",
+  });
 });
 
 test("the codex subject gets the auth file in its new home, and the output is the agent message", async () => {

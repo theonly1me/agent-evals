@@ -9,6 +9,7 @@ import type { Experiment } from "./spec";
 const attemptSchema = runRecordSchema.extend({
   attempt: z.number().int().nonnegative(),
   detail: z.string().optional(),
+  limited: z.boolean().optional(),
   work: z.string().optional(),
   output: z.string().optional(),
 });

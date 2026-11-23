@@ -2,6 +2,7 @@ import { cp, mkdir } from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
 import type { RunRecord } from "@agent-evals/records";
+import { limitReached, nextAttemptOf, type StopReason } from "./attemptPolicy";
 import { canaryVariable } from "./canary";
 import { type AskJudge, askJudgeFor } from "./judge";
 import { judgeBlock } from "./judging";
@@ -21,7 +22,6 @@ import {
   appendAttempt,
   type Attempt,
   type Judgment,
-  lastAttempts,
   readAttempts,
   readJudgments,
   recordsOf,
@@ -32,7 +32,12 @@ import {
 } from "./store";
 import { subjectProgram } from "./subjects";
 
-export type StopReason = "complete" | "run-limit" | "cost-limit" | "judge-limit" | "look";
+export type { StopReason } from "./attemptPolicy";
+
+export type LimitWait = {
+  readonly seconds: number;
+  readonly sleep?: (seconds: number) => Promise<void>;
+};
 
 export type RunSummary = {
   readonly reason: StopReason;
@@ -49,6 +54,8 @@ export type RunOptions = {
   readonly realHome?: string;
   readonly askJudge?: AskJudge;
   readonly onAttempt?: (attempt: Attempt) => void;
+  readonly limitWait?: LimitWait;
+  readonly onLimit?: (options: { readonly attempt: Attempt; readonly waitSeconds?: number }) => void;
   readonly atLook?: (look: {
     readonly tasksDone: number;
     readonly records: readonly RunRecord[];
@@ -71,6 +78,11 @@ type VersionReader = (options: {
 }) => Promise<Readonly<Record<string, string>> | undefined>;
 
 const versionSeconds = 60;
+const millisecondsPerSecond = 1000;
+
+async function sleepSeconds(seconds: number): Promise<void> {
+  await Bun.sleep(seconds * millisecondsPerSecond);
+}
 const storedOutputLimit = 20_000;
 
 function sourceOf(options: { readonly source: string; readonly realHome: string }): string {
@@ -244,7 +256,13 @@ async function runCell(context: CellContext): Promise<Attempt> {
   };
 
   if (subject.status === "infra-failure") {
-    return { ...measured, status: "infra-failure", scores: {}, detail: subject.detail };
+    return {
+      ...measured,
+      status: "infra-failure",
+      scores: {},
+      detail: subject.detail,
+      limited: subject.limited,
+    };
   }
 
   if (run.canaryToken !== undefined && subject.output.includes(run.canaryToken)) {
@@ -284,33 +302,6 @@ async function runCell(context: CellContext): Promise<Attempt> {
     : { ...measured, status: "infra-failure", scores: {}, detail: grade.detail };
 }
 
-function nextAttemptOf(options: {
-  readonly last: Attempt | undefined;
-  readonly retries: number;
-}): number | null {
-  const { last, retries } = options;
-
-  if (last === undefined) {
-    return 0;
-  }
-
-  return last.status === "infra-failure" && last.attempt < retries ? last.attempt + 1 : null;
-}
-
-function limitReached(options: {
-  readonly experiment: Experiment;
-  readonly attempts: readonly Attempt[];
-}): StopReason | null {
-  const { experiment, attempts } = options;
-  const cost = attempts.reduce((total, attempt) => total + (attempt.costUsd ?? 0), 0);
-
-  if (experiment.maxRuns !== undefined && attempts.length >= experiment.maxRuns) {
-    return "run-limit";
-  }
-
-  return experiment.maxCostUsd !== undefined && cost >= experiment.maxCostUsd ? "cost-limit" : null;
-}
-
 async function runBlock(options: {
   readonly run: RunOptions;
   readonly store: Store;
@@ -321,10 +312,9 @@ async function runBlock(options: {
   const { run, store, block, attempts, versions } = options;
 
   for (const cell of block.cells) {
-    let attempt = nextAttemptOf({
-      last: lastAttempts(attempts).get(cellKey(cell)),
-      retries: run.experiment.retries,
-    });
+    const key = cellKey(cell);
+    const cellAttempts = attempts.filter((attempt) => cellKey(attempt) === key);
+    let attempt = nextAttemptOf({ cellAttempts, retries: run.experiment.retries });
 
     while (attempt !== null) {
       const limit = limitReached({ experiment: run.experiment, attempts });
@@ -337,8 +327,20 @@ async function runBlock(options: {
 
       await appendAttempt({ store, attempt: result });
       attempts.push(result);
+      cellAttempts.push(result);
       run.onAttempt?.(result);
-      attempt = nextAttemptOf({ last: result, retries: run.experiment.retries });
+
+      if (result.limited === true) {
+        if (run.limitWait === undefined) {
+          run.onLimit?.({ attempt: result });
+          return "usage-limit";
+        }
+
+        run.onLimit?.({ attempt: result, waitSeconds: run.limitWait.seconds });
+        await (run.limitWait.sleep ?? sleepSeconds)(run.limitWait.seconds);
+      }
+
+      attempt = nextAttemptOf({ cellAttempts, retries: run.experiment.retries });
     }
   }
 

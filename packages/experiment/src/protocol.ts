@@ -30,6 +30,7 @@ const subjectResponseSchema = z.object({
   status: z.enum(runStatuses).default("completed"),
   output: z.string().default(""),
   detail: z.string().optional(),
+  limited: z.boolean().optional(),
   costUsd: z.number().nonnegative().optional(),
   versions: z.record(z.string(), z.string()).optional(),
 });

@@ -9,6 +9,12 @@ if (marker && request.task.id === "flaky" && !(await Bun.file(marker).exists()))
   await Bun.write(marker, "failed once");
   process.exit(3);
 }
+const limitMarker = process.env.LIMIT_ONCE_MARKER;
+if (limitMarker && request.task.id === "limited" && !(await Bun.file(limitMarker).exists())) {
+  await Bun.write(limitMarker, "limited once");
+  console.log(JSON.stringify({ status: "infra-failure", limited: true, detail: "usage limit reached" }));
+  process.exit(0);
+}
 if (request.task.id === "slow") {
   await Bun.sleep(5000);
 }

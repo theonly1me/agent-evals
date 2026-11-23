@@ -34,12 +34,14 @@ export const experimentUsage = `Usage:
   agent-evals run <experiment>       Run the frozen experiment and give the verdict.
 
 Options for run:
-  --format <format>      text (default), markdown, html, or json.
-  --output <file>        Write the report to a file.
+  --format <format>          text (default), markdown, html, or json.
+  --output <file>            Write the report to a file.
+  --wait-on-limit <minutes>  When the agent hits a usage limit, wait and try the run again.
 `;
 
 const defaultFolder = "agent-evals-example";
 const shownDigestLength = 12;
+const secondsPerMinute = 60;
 
 async function isEmptyOrMissing(directory: string): Promise<boolean> {
   try {
@@ -126,6 +128,7 @@ function stopNote(options: {
     "cost-limit": `Stopped at the cost limit of ${experiment.maxCostUsd} USD, after ${summary.tasksDone} of ${taskCount} tasks. Raise maxCostUsd and run again to continue.`,
     "judge-limit": `Stopped at the limit of ${experiment.maxJudgeCalls} judge calls, after ${summary.tasksDone} of ${taskCount} tasks. Raise maxJudgeCalls and run again to continue.`,
     look: `Stopped at the look after ${summary.tasksDone} of ${taskCount} tasks, because the verdict is conclusive.`,
+    "usage-limit": `Stopped at a usage limit of the agent, after ${summary.tasksDone} of ${taskCount} tasks. The limited run has no score and used no retry. Run again after the limit resets, or use --wait-on-limit.`,
   };
   const analyses = analysisCount(experiment);
   const levelNote =
@@ -141,13 +144,23 @@ function parseRunArguments(argumentList: readonly string[]) {
     const { values, positionals } = parseArgs({
       args: [...argumentList],
       allowPositionals: true,
-      options: { format: { type: "string" }, output: { type: "string" } },
+      options: {
+        format: { type: "string" },
+        output: { type: "string" },
+        "wait-on-limit": { type: "string" },
+      },
     });
     const format = reportFormats.find((candidate) => candidate === (values.format ?? "text"));
+    const waitMinutes =
+      values["wait-on-limit"] === undefined ? undefined : Number(values["wait-on-limit"]);
 
-    return format === undefined
-      ? { problem: `--format must be one of: ${reportFormats.join(", ")}.` }
-      : { positionals, format, output: values.output };
+    if (format === undefined) {
+      return { problem: `--format must be one of: ${reportFormats.join(", ")}.` };
+    }
+
+    return waitMinutes !== undefined && !(waitMinutes > 0)
+      ? { problem: "--wait-on-limit must be a number of minutes above 0." }
+      : { positionals, format, output: values.output, waitMinutes };
   } catch (error) {
     return { problem: error instanceof Error ? error.message : String(error) };
   }
@@ -234,6 +247,17 @@ export async function runRun(options: {
         lock: lockCheck.lock,
         sandbox,
         canaryToken: probe.token,
+        limitWait:
+          parsed.waitMinutes === undefined
+            ? undefined
+            : { seconds: parsed.waitMinutes * secondsPerMinute },
+        onLimit: ({ attempt, waitSeconds }) => {
+          options.onProgress(
+            waitSeconds === undefined
+              ? `The agent hit a usage limit on ${attempt.task} ${attempt.arm}: ${attempt.detail ?? ""}`
+              : `The agent hit a usage limit on ${attempt.task} ${attempt.arm}. Waiting ${waitSeconds / secondsPerMinute} minutes before the next try.`,
+          );
+        },
         atLook: (look) => {
           const decision = lookDecision({ experiment, records: look.records });
 
@@ -245,6 +269,11 @@ export async function runRun(options: {
         },
         onAttempt: (attempt) => {
           count += attempt.attempt === 0 ? 1 : 0;
+
+          if (attempt.limited === true) {
+            return;
+          }
+
           options.onProgress(progressLine({ attempt, count, total }));
         },
       }),
