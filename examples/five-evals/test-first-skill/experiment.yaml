@@ -115,7 +115,7 @@ tasks:
 subject:
   agent: claude-code
   model: claude-sonnet-5-5
-  flags: [--effort, high, --setting-sources, user, --disable-slash-commands, --strict-mcp-config, --no-session-persistence]
+  flags: [--effort, high, --setting-sources, user, --strict-mcp-config, --no-session-persistence]
 
 grader:
   command: [python3, ./../shared/grade.py]
