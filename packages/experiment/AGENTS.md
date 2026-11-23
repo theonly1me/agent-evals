@@ -26,6 +26,8 @@ The runner: it reads an experiment, freezes its design, runs each arm on each ta
 - `src/looks.ts`: the significance level of each analysis and the decision at a look.
 - `src/judge.ts`, `src/judging.ts`: the judge request, the prompt of an agent judge, and the scores of a rubric judge and of a pairwise judge.
 - `src/subjects.ts`: the command subject and the subjects for Claude Code and Codex.
+- `src/agentResults.ts`, `src/usageLimit.ts`: how the result of Claude Code and of Codex becomes a subject response, and which error is a usage limit.
+- `src/attemptPolicy.ts`: the next attempt of a cell, the stop reasons, and the run and cost limits.
 - `src/store.ts`: the attempts in `.agent-evals/runs.jsonl` and the work folders.
 
 ## Rules
@@ -38,6 +40,7 @@ The runner: it reads an experiment, freezes its design, runs each arm on each ta
 - A judge that fails gives no score. It never gives a 0.
 - Each analysis uses the 5% level divided by the number of analyses. `src/looks.test.ts` holds the false positive rate at or below 5%.
 - An infrastructure failure has no score. Record each attempt, and never remove one.
+- A usage limit of the agent uses no retry and does not count against a limit. The run stops, or it waits with `--wait-on-limit`.
 - A change to the design or to an input file after the freeze stops the run.
 - Return a problem as a value with the name of the field or the file. Do not throw for bad input.
 

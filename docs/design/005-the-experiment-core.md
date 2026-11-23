@@ -56,6 +56,8 @@ A subject and a grader are programs in any language. Each reads one JSON request
 
 The runner retries an infrastructure failure up to `retries` times. Each attempt is one line in `.agent-evals/runs.jsonl`, and each attempt counts against `maxRuns`. A second `run` reads the file and starts only the runs that are missing.
 
+A usage limit of the agent is a different failure. The subject marks it as `limited`, for example when Claude Code reports that the account hit its session limit. The runner records the attempt with no score. That attempt does not use a retry and does not count against `maxRuns` or `maxCostUsd`. The run then stops with the reason `usage-limit`, so a later `run` tries the same cell again. With `--wait-on-limit <minutes>`, the runner waits and tries the cell again in the same run. Without this rule, a limit that lasts one hour turns each remaining cell into a failure.
+
 ### Sequence
 
 1. This record: the experiment core, with the host sandbox and the command subject.
