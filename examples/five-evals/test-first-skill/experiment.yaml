@@ -1,0 +1,147 @@
+name: test-first-skill
+metric: passed
+baseline: no-skill
+
+arms:
+  no-skill: {}
+  test-first-skill:
+    home:
+      .claude/skills/test-first/SKILL.md: ../shared/skills/test-first/SKILL.md
+
+tasks:
+  - id: affine-cipher
+    promptFile: ../shared/tasks/affine-cipher/prompt.md
+    workspace: ../shared/tasks/affine-cipher/workspace
+  - id: beer-song
+    promptFile: ../shared/tasks/beer-song/prompt.md
+    workspace: ../shared/tasks/beer-song/workspace
+  - id: book-store
+    promptFile: ../shared/tasks/book-store/prompt.md
+    workspace: ../shared/tasks/book-store/workspace
+  - id: bottle-song
+    promptFile: ../shared/tasks/bottle-song/prompt.md
+    workspace: ../shared/tasks/bottle-song/workspace
+  - id: bowling
+    promptFile: ../shared/tasks/bowling/prompt.md
+    workspace: ../shared/tasks/bowling/workspace
+  - id: connect
+    promptFile: ../shared/tasks/connect/prompt.md
+    workspace: ../shared/tasks/connect/workspace
+  - id: dominoes
+    promptFile: ../shared/tasks/dominoes/prompt.md
+    workspace: ../shared/tasks/dominoes/workspace
+  - id: dot-dsl
+    promptFile: ../shared/tasks/dot-dsl/prompt.md
+    workspace: ../shared/tasks/dot-dsl/workspace
+  - id: food-chain
+    promptFile: ../shared/tasks/food-chain/prompt.md
+    workspace: ../shared/tasks/food-chain/workspace
+  - id: forth
+    promptFile: ../shared/tasks/forth/prompt.md
+    workspace: ../shared/tasks/forth/workspace
+  - id: go-counting
+    promptFile: ../shared/tasks/go-counting/prompt.md
+    workspace: ../shared/tasks/go-counting/workspace
+  - id: grade-school
+    promptFile: ../shared/tasks/grade-school/prompt.md
+    workspace: ../shared/tasks/grade-school/workspace
+  - id: grep
+    promptFile: ../shared/tasks/grep/prompt.md
+    workspace: ../shared/tasks/grep/workspace
+  - id: hangman
+    promptFile: ../shared/tasks/hangman/prompt.md
+    workspace: ../shared/tasks/hangman/workspace
+  - id: list-ops
+    promptFile: ../shared/tasks/list-ops/prompt.md
+    workspace: ../shared/tasks/list-ops/workspace
+  - id: paasio
+    promptFile: ../shared/tasks/paasio/prompt.md
+    workspace: ../shared/tasks/paasio/workspace
+  - id: phone-number
+    promptFile: ../shared/tasks/phone-number/prompt.md
+    workspace: ../shared/tasks/phone-number/workspace
+  - id: pig-latin
+    promptFile: ../shared/tasks/pig-latin/prompt.md
+    workspace: ../shared/tasks/pig-latin/workspace
+  - id: poker
+    promptFile: ../shared/tasks/poker/prompt.md
+    workspace: ../shared/tasks/poker/workspace
+  - id: pov
+    promptFile: ../shared/tasks/pov/prompt.md
+    workspace: ../shared/tasks/pov/workspace
+  - id: proverb
+    promptFile: ../shared/tasks/proverb/prompt.md
+    workspace: ../shared/tasks/proverb/workspace
+  - id: react
+    promptFile: ../shared/tasks/react/prompt.md
+    workspace: ../shared/tasks/react/workspace
+  - id: rest-api
+    promptFile: ../shared/tasks/rest-api/prompt.md
+    workspace: ../shared/tasks/rest-api/workspace
+  - id: robot-name
+    promptFile: ../shared/tasks/robot-name/prompt.md
+    workspace: ../shared/tasks/robot-name/workspace
+  - id: scale-generator
+    promptFile: ../shared/tasks/scale-generator/prompt.md
+    workspace: ../shared/tasks/scale-generator/workspace
+  - id: sgf-parsing
+    promptFile: ../shared/tasks/sgf-parsing/prompt.md
+    workspace: ../shared/tasks/sgf-parsing/workspace
+  - id: simple-linked-list
+    promptFile: ../shared/tasks/simple-linked-list/prompt.md
+    workspace: ../shared/tasks/simple-linked-list/workspace
+  - id: transpose
+    promptFile: ../shared/tasks/transpose/prompt.md
+    workspace: ../shared/tasks/transpose/workspace
+  - id: tree-building
+    promptFile: ../shared/tasks/tree-building/prompt.md
+    workspace: ../shared/tasks/tree-building/workspace
+  - id: two-bucket
+    promptFile: ../shared/tasks/two-bucket/prompt.md
+    workspace: ../shared/tasks/two-bucket/workspace
+  - id: variable-length-quantity
+    promptFile: ../shared/tasks/variable-length-quantity/prompt.md
+    workspace: ../shared/tasks/variable-length-quantity/workspace
+  - id: wordy
+    promptFile: ../shared/tasks/wordy/prompt.md
+    workspace: ../shared/tasks/wordy/workspace
+  - id: zebra-puzzle
+    promptFile: ../shared/tasks/zebra-puzzle/prompt.md
+    workspace: ../shared/tasks/zebra-puzzle/workspace
+  - id: zipper
+    promptFile: ../shared/tasks/zipper/prompt.md
+    workspace: ../shared/tasks/zipper/workspace
+
+subject:
+  agent: claude-code
+  model: claude-sonnet-5-5
+  flags: [--effort, high, --setting-sources, user, --disable-slash-commands, --strict-mcp-config, --no-session-persistence]
+
+grader:
+  command: [python3, ./../shared/grade.py]
+
+judges:
+  - kind: pairwise
+    metric: quality-fable-judge
+    agent: claude-code
+    model: claude-fable-5-2
+    flags: [--effort, medium, --setting-sources, "", --disable-slash-commands, --strict-mcp-config, --no-session-persistence]
+    include: ["judge-view/raw/**/*.py"]
+    rubric: |
+      Both entries solve the same programming exercise. Decide which solution is easier to read, to understand, and to change.
+      Ignore whether the solution is correct. Ignore length by itself and style details such as blank lines.
+      Use these claims as a guide. For each entry, decide if each claim is true.
+      1. Every function, class, and variable name says what it does or holds.
+      2. Each function does one thing at one level of abstraction.
+      3. Rules of the exercise appear as named functions or named constants, not as unexplained arithmetic.
+      4. No control flow is nested deeper than two levels.
+      5. No logic is duplicated.
+      6. Edge cases and errors are handled in named steps, not in scattered conditionals.
+      7. There is no dead code and no unused parameter.
+
+repeats: 1
+maxRuns: 100
+maxJudgeCalls: 100
+timeoutSeconds: 1800
+inputs: [../shared]
+passEnv: [CLAUDE_CODE_OAUTH_TOKEN]
