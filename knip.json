@@ -22,7 +22,7 @@
       "project": ["src/**/*.ts", "scripts/**/*.ts", "bin/*.mjs"]
     },
     "examples": {
-      "entry": ["**/*.test.ts", "code-review/convert.ts", "**/shared/**/*.mjs"],
+      "entry": ["**/*.test.ts", "code-review/convert.ts", "five-evals/fetchTasks.ts", "**/shared/**/*.mjs"],
       "project": ["**/*.ts", "**/*.mjs"]
     }
   }
